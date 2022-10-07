@@ -8,6 +8,7 @@ class CustomTextField extends StatefulWidget {
   const CustomTextField({Key? key,
     this.hintText = '',
     this.suffixIcon = false,
+    this.prefixIcon=false,
     this.obsText = false,
     this.width=0.0,
     this.height=0.0,
@@ -20,6 +21,7 @@ class CustomTextField extends StatefulWidget {
   final bool obsText;
   final double height;
   final double width;
+  final bool prefixIcon;
   final TextEditingController controller;
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -40,6 +42,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         style: TextDimensions.style15RajdhaniW400White,
         controller: widget.controller,
         obscureText:visibility ? true : false,
+        
         decoration: InputDecoration(
             hintText: widget.hintText,
             hintStyle: TextDimensions.style15RajdhaniW400White,
@@ -60,6 +63,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             )
                 : Text(''),
             filled: true,
+            prefixIcon: widget.prefixIcon?Icon(Icons.search,size: 20,color:AppColors.whiteColor,):Image(image: AssetImage("")),
             fillColor: AppColors.lightNavyBlue,
             border: OutlineInputBorder(
                 // borderRadius: new BorderRadius.circular(10.0),
