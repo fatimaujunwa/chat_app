@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ichat/app_colors.dart';
 import 'package:ichat/database_services.dart';
 import 'package:ichat/helper_functions.dart';
+import 'package:ichat/text_dimensions.dart';
 
 class Chat extends StatefulWidget {
  Chat({Key? key, required this.chatRoomId,required this.uid}) : super(key: key);
@@ -72,8 +74,9 @@ DatabaseServices(uid:widget.uid).addMessage(widget.chatRoomId, chatMessageMap);
     }
 
     return Scaffold(
-
-      body: Container(
+backgroundColor: AppColors.darkNavyBlue,
+      body:
+      Container(
         child: Stack(
           children: [
             chatMessages(),
@@ -128,48 +131,59 @@ class MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-          top: 8,
-          bottom: 8,
-          left: sendByMe ? 0 : 24,
-          right: sendByMe ? 24 : 0),
-      alignment: sendByMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: sendByMe
-            ? EdgeInsets.only(left: 30)
-            : EdgeInsets.only(right: 30),
-        padding: EdgeInsets.only(
-            top: 17, bottom: 17, left: 20, right: 20),
-        decoration: BoxDecoration(
-            borderRadius: sendByMe ? BorderRadius.only(
-                topLeft: Radius.circular(23),
-                topRight: Radius.circular(23),
-                bottomLeft: Radius.circular(23)
-            ) :
-            BorderRadius.only(
-                topLeft: Radius.circular(23),
-                topRight: Radius.circular(23),
-                bottomRight: Radius.circular(23)),
-            gradient: LinearGradient(
-              colors: sendByMe ? [
-                const Color(0xff007EF4),
-                const Color(0xff2A75BC)
-              ]
-                  : [
-                Colors.red,
-                const Color(0x1AFFFFFF)
-              ],
-            )
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(
+              top: 8,
+              bottom: 8,
+              left: sendByMe ? 0 : 20,
+              right: sendByMe ? 20 : 0),
+          alignment: sendByMe ? Alignment.centerRight : Alignment.centerLeft,
+          child: 
+          Container(
+            margin: sendByMe
+                ? EdgeInsets.only(left: 30)
+                : EdgeInsets.only(right: 30),
+            padding: EdgeInsets.only(
+                top: 17, bottom: 17, left: 20, right: 20),
+            decoration: BoxDecoration(
+                borderRadius: sendByMe ? BorderRadius.only(
+                    // topLeft: Radius.circular(23),
+                    topRight: Radius.circular(23),
+                    bottomLeft: Radius.circular(23)
+                ) :
+                BorderRadius.only(
+                    topLeft: Radius.circular(23),
+                    // topRight: Radius.circular(23),
+                    bottomRight: Radius.circular(23)),
+                gradient: LinearGradient(
+                  colors: sendByMe ? [
+                    AppColors.lightNavyBlue,
+                    AppColors.lightNavyBlue,
+                  ]
+                      : [
+                    AppColors.darkBlue,
+                    AppColors.darkBlue,
+                  ],
+                )
+            ),
+            child: Text(message,
+                textAlign: TextAlign.start,
+                style:TextDimensions.style17RajdhaniW400White),
+          ),
         ),
-        child: Text(message,
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontFamily: 'OverpassRegular',
-                fontWeight: FontWeight.w300)),
-      ),
+    Container(
+      // color: Colors.red,
+      margin: sendByMe
+          ? EdgeInsets.only(left: 220)
+          : EdgeInsets.only(right:220),
+      padding: EdgeInsets.only(
+          top: 17, bottom: 17, left: 20, right: 20),
+      child: Text('1 FEB 12:00 2022',style: TextDimensions.style12RajdhaniW600White,),
+    
+    )
+      ],
     );
   }
 }

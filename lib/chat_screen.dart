@@ -1,3 +1,5 @@
+
+import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,143 +18,59 @@ class ChatScreen extends StatelessWidget {
     ];
     TextEditingController search =TextEditingController();
     return Scaffold(
+      backgroundColor: AppColors.darkNavyBlue,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.lightNavyBlue,
+        backgroundColor: AppColors.darkBlue,
         onPressed: () {},
         child: Icon(Icons.add),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: AppColors.darkBlue,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 10,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Material(
-                color: AppColors.darkBlue,
-                child: Center(
-                  child: InkWell(
-                    // focusColor: Colors.transparent,
-                    // hoverColor: Colors.transparent,
-                    // highlightColor: Colors.transparent,
-                    onTap: () {
-                      // setState(() {
-                      //   currentTab = 0;
-                      // });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.home),
-                        Text("Home"),
-                        //const Padding(padding: EdgeInsets.all(10))
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Material(
-                color: AppColors.darkBlue,
-                child: Center(
-                  child: InkWell(
-                    focusColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onTap: () {
-                      // setState(() {
-                      //   currentTab = 1;
-                      // });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.group),
-                        Text("Grupos"),
-                        //const Padding(padding: EdgeInsets.only(left: 10))
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(),//to make space for the floating button
-              Material(
-                color: AppColors.darkBlue,
-                child: Center(
-                  child: InkWell(
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        // setState(() {
-                        //   currentTab = 2;
-                        // });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.checklist_outlined),
-                          Text("Completadas"),
-                          //const Padding(padding: EdgeInsets.only(right: 10))
-                        ],
-                      )),
-                ),
-              ),
-              Material(
-                color: AppColors.darkBlue,
-                child: Center(
-                  child: InkWell(
-                    focusColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onTap: () {
-                      // setState(() {
-                      //   currentTab = 3;
-                      // });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.person),
-                        Text("Perfil")
-                        //const Padding(padding: EdgeInsets.only(left: 10))
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+        bottomNavigationBar: FloatingNavbar(
+          selectedItemColor: AppColors.darkBlue,
+          unselectedItemColor: AppColors.darkNavyBlue,
+          backgroundColor: AppColors.whiteColor,
+          onTap: (int val) {
+            //returns tab id which is user tapped
+          },
+          currentIndex: 0,
+          items: [
+            FloatingNavbarItem(icon: Icons.home, title: 'Home'),
+            FloatingNavbarItem(icon: Icons.explore, title: 'Explore'),
+            FloatingNavbarItem(icon: Icons.chat_bubble_outline, title: 'Chats'),
+            FloatingNavbarItem(icon: Icons.settings, title: 'Settings'),
+          ],
         ),
-      ),
 
-      backgroundColor: AppColors.darkNavyBlue,
-      body: Container(
+
+      body: SingleChildScrollView(
+        child: Container(
 margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
-        color: AppColors.darkNavyBlue,
-child: Column(
+          color: AppColors.darkNavyBlue,
+child:
+Column(
   crossAxisAlignment: CrossAxisAlignment.stretch,
   children: [
     Text('Chats',style: TextDimensions.style36RajdhaniW700White,),
     SizedBox(height: 20.h,),
     CustomTextField(
-      hintText: 'Search..',
-      prefixIcon: true,
-      obsText: false,
-      suffixIcon: false,
-      height: 80.h,
-      width: 350.w,
-      controller:  search,
+      icon: Icons.search,
+        hintText: 'Search..',
+        prefixIcon: true,
+        obsText: false,
+        suffixIcon: false,
+        height: 80.h,
+        width: 350.w,
+        color: AppColors.middleShadeNavyBlue,
+        controller:  search,
     ),
-    SizedBox(height: 30.h,),
-    Expanded(
-      child: ListView.builder(
+    SizedBox(height: 8.h,),
+    ListView.builder(
+        shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
           itemCount: images.length,
           itemBuilder: (_,index){
-        return Column(
+        return
+          Column(
 
           children: [
             Container(
@@ -192,11 +110,11 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
             Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
           ],
         );
-      }),
-    )
+    })
   ],
 ),
 
+        ),
       ),
     );
   }

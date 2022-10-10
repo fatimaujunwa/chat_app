@@ -7,6 +7,6 @@ class AppColors{
   static final middleShadeNavyBlue=Color(0xff292f3f);
   static final testColorone=Color(0xff232d4b);
   static final testColortwo=Color(0xff4b5978);
-  static final testColorthree=Color(0xff687eb3);
+  static final vDarkBlue=Color(0xff272A35);
   static final darkBlue=Color(0xff1754D9);
 }

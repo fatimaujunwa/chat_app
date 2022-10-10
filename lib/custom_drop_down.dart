@@ -39,7 +39,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
               width: 350.w,
               decoration: BoxDecoration(
                 // borderRadius: new BorderRadius.circular(12.r),
-                color: AppColors.lightNavyBlue,
+                color: AppColors.middleShadeNavyBlue,
               ),
 
               child: DropdownButtonHideUnderline(

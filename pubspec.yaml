@@ -43,6 +43,7 @@ dependencies:
   google_fonts:
   flutter_screenutil:
   dropdown_button2:
+  floating_bottom_navigation_bar:
 
 
 dev_dependencies:

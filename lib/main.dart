@@ -2,10 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ichat/chat_screen.dart';
+import 'package:ichat/chatroom.dart';
+import 'package:ichat/groups.dart';
+import 'package:ichat/members.dart';
 import 'package:ichat/search_screen.dart';
 import 'package:ichat/sign_in_screen.dart';
 import 'package:ichat/sign_up_screen.dart';
 import 'package:ichat/test.dart';
+
+import 'chat.dart';
+import 'group_chat.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

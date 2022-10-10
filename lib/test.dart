@@ -59,9 +59,11 @@ class Test extends StatelessWidget {
       body: Container(
         child: Center(child:
         CustomTextField(
+          icon: Icons.person,
           hintText: 'DD-MM-YY',
           height: 52.h,
           width: 350.w,
+          color: AppColors.middleShadeNavyBlue,
           controller: collectionDate,
         ), ),
       ),
