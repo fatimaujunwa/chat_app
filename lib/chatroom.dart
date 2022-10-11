@@ -46,7 +46,7 @@ class ChatRoomScreen extends StatelessWidget {
           Divider(color: AppColors.lightNavyBlue,),
      MessageTile(message: 'hi', sendByMe:false),
           MessageTile(message: 'hello', sendByMe:true),
-          MessageTile(message: 'hi my name is ', sendByMe:false),
+          MessageTile(message: 'hi my name is i ', sendByMe:false),
           MessageTile(message: 'hell i know', sendByMe:true)
         ],
 
