@@ -14,7 +14,8 @@ class CustomTextField extends StatefulWidget {
     this.height=0.0,
     required this.controller,
  required this.color,
-    required this.icon
+    required this.icon,
+
 
 
 
@@ -26,7 +27,8 @@ class CustomTextField extends StatefulWidget {
   final double width;
   final bool prefixIcon;
   final Color color;
-  final IconData icon;
+  final Widget icon;
+
   final TextEditingController controller;
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -68,7 +70,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             )
                 : Text(''),
             filled: true,
-            prefixIcon: widget.prefixIcon?Icon(widget.icon,size: 20,color:AppColors.whiteColor,):Text(""),
+            prefixIcon: widget.prefixIcon?widget.icon:Text(""),
             fillColor: widget.color,
             border: OutlineInputBorder(
                 // borderRadius: new BorderRadius.circular(10.0),

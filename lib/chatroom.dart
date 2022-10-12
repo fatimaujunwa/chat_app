@@ -65,7 +65,7 @@ class ChatRoomScreen extends StatelessWidget {
                   Expanded(
                       child:
                       CustomTextField(
-                        icon: Icons.email_outlined,
+                        icon: Icon(Icons.email_outlined),
                         hintText: 'Type Something...',
                         // prefixIcon: false,
                         obsText: false,

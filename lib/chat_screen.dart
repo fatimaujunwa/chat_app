@@ -1,4 +1,5 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,46 @@ import 'package:ichat/app_colors.dart';
 import 'package:ichat/custom_textfield.dart';
 import 'package:ichat/text_dimensions.dart';
 
-class ChatScreen extends StatelessWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+import 'chat.dart';
+import 'database_services.dart';
+import 'helper_functions.dart';
+
+class ChatScreen extends StatefulWidget {
+   ChatScreen({Key? key,required this.uid}) : super(key: key);
+var uid;
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  bool haveUserSearched = false;
+  QuerySnapshot? searchResultSnapshot;
+  initiateSearch(TextEditingController searchEditingController) async {
+    if(searchEditingController.text.isNotEmpty){
+      await DatabaseServices(uid: widget.uid).searchUser(searchEditingController.text).then((value) {
+        searchResultSnapshot = value;
+        print("$searchResultSnapshot");
+        setState(() {
+          haveUserSearched=true;
+        });
+      });
+
+    }
+  }
+
+  getChatRoomId(String? a, String b) {
+    if (a!.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return "$b\_$a";
+    } else {
+      return "$a\_$b";
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +81,11 @@ class ChatScreen extends StatelessWidget {
         ),
 
 
-      body: SingleChildScrollView(
-        child: Container(
+      body:
+      SingleChildScrollView(
+        child:
+
+       Container(
 margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
           color: AppColors.darkNavyBlue,
 child:
@@ -53,7 +95,11 @@ Column(
     Text('Chats',style: TextDimensions.style36RajdhaniW700White,),
     SizedBox(height: 20.h,),
     CustomTextField(
-      icon: Icons.search,
+      icon: InkWell(
+        onTap: (){
+          initiateSearch(search);
+        },
+        child: Icon(Icons.search),),
         hintText: 'Search..',
         prefixIcon: true,
         obsText: false,
@@ -64,7 +110,8 @@ Column(
         controller:  search,
     ),
     SizedBox(height: 8.h,),
-    ListView.builder(
+
+    haveUserSearched?userList(): ListView.builder(
         shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemCount: images.length,
@@ -117,5 +164,87 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
         ),
       ),
     );
+  }
+  Widget userList(){
+    return haveUserSearched ? ListView.builder(
+        shrinkWrap: true,
+        itemCount: searchResultSnapshot!.docs.length,
+        itemBuilder: (context, index){
+          return userTile(
+            searchResultSnapshot!.docs[index]["firstname"],
+            searchResultSnapshot!.docs[index]["email"],
+          );
+        }) : Container();
+  }
+  Widget userTile(String userName,String userEmail){
+    return
+      Container(
+        padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
+        height: 80.h ,
+        width: 350.w,
+
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+
+            CircleAvatar(radius: 50.r,
+              backgroundColor: AppColors.middleShadeNavyBlue,
+              // backgroundImage: AssetImage('images/${images[index]}'),
+            ),
+            // SizedBox(width: 5.w,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(userName,style: TextDimensions.style17RajdhaniW600White,),
+                SizedBox(height: 10.h,),
+                Text(userEmail,style: TextDimensions.style12RajdhaniW600White,)
+              ],),
+            SizedBox(width: 10.w,),
+            Column(
+              children: [
+                Text(''),
+                Container(height: 35.h,width: 80.w,
+                  decoration: BoxDecoration(
+                      color: AppColors.darkBlue,
+                      borderRadius: BorderRadius.circular(6.r)
+                  ),
+                  alignment: Alignment.center,
+                  child: Text('Message',style: TextDimensions.style15RajdhaniW400White,),
+                ),
+
+
+              ],
+            ),
+            // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
+
+
+          ],),
+      );
+  }
+  String sortChatId(String chatRoomId){
+    List<String> sortedString = chatRoomId.split("");
+    sortedString.sort();
+
+    return sortedString.join();
+  }
+  sendMessage(String userName) async {
+    List<String?> users = [ await HelperFunctions.getUserNameFromSF(),userName];
+
+    String chatRoomId = sortChatId( getChatRoomId(await HelperFunctions.getUserNameFromSF(),userName));
+
+    Map<String, dynamic> chatRoom = {
+      "users": users,
+      "chatRoomId" : chatRoomId,
+    };
+    DatabaseServices(uid: widget.uid).addChatRoom(chatRoom, chatRoomId);
+
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => Chat(
+          chatRoomId: chatRoomId,
+          uid:widget.uid,
+
+        )
+    ));
+
   }
 }

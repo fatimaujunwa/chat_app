@@ -31,7 +31,7 @@ class MembersList extends StatelessWidget {
             ),
             SizedBox(height: 20.h,),
             CustomTextField(
-              icon: Icons.search,
+              icon: Icon(Icons.search),
               hintText: 'Search...',
               prefixIcon: true,
               obsText: false,

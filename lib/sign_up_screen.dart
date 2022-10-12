@@ -13,15 +13,20 @@ import 'auth_services.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({Key? key}) : super(key: key);
-void register(TextEditingController email,TextEditingController password, TextEditingController fullName)async{
+void register(BuildContext context,TextEditingController email,TextEditingController password, TextEditingController lastname,TextEditingController groupName,TextEditingController firstname,)async{
   String emailController=email.text.trim();
   String passwordController=password.text.trim();
-  String fullNameController=fullName.text.trim();
-  AuthServices().registerUserWithEmailAndPassword(emailController, passwordController, fullNameController)..then((value) {
+  String firstNameController=firstname.text.trim();
+  String groupNameController=groupName.text.trim();
+  String lastNameController=lastname.text.trim();
+  AuthServices().registerUserWithEmailAndPassword(emailController, passwordController, firstNameController,groupNameController,lastNameController)..then((value) {
     if(value==true){
       HelperFunctions.saveUserLoggedInStatus(value);
       HelperFunctions.saveUserEmailSF(emailController);
-      HelperFunctions.saveUserNameSF(fullNameController);
+      HelperFunctions.saveUserNameSF(firstNameController);
+      Navigator.push(context, MaterialPageRoute(builder: (context){
+        return SignInScreen();
+      }));
     }
   });
 
@@ -47,7 +52,7 @@ SizedBox(height: 53.h,),
          Text('First name',style: TextDimensions.style15RajdhaniW400White,),
          SizedBox(height: 6.h,),
          CustomTextField(
-           icon: Icons.person,
+           icon: Icon(Icons.person),
            hintText: 'John',
            height: 52.h,
            width: 350.w,
@@ -60,7 +65,7 @@ SizedBox(height: 53.h,),
          Text('Last name',style: TextDimensions.style15RajdhaniW400White,),
          SizedBox(height: 6.h,),
          CustomTextField(
-           icon: Icons.person,
+           icon: Icon(Icons.person),
            hintText: 'Doe',
            height: 52.h,
            width: 350.w,
@@ -72,7 +77,7 @@ SizedBox(height: 53.h,),
          Text('Email',style: TextDimensions.style15RajdhaniW400White,),
          SizedBox(height: 6.h,),
          CustomTextField(
-           icon: Icons.alternate_email,
+           icon: Icon(Icons.alternate_email),
            hintText: 'johndoe01@gmail.com',
            height: 52.h,
            prefixIcon: true,
@@ -88,7 +93,7 @@ SizedBox(height: 53.h,),
          Text('Password',style: TextDimensions.style15RajdhaniW400White,),
          SizedBox(height: 6.h,),
          CustomTextField(
-           icon: Icons.lock,
+           icon: Icon(Icons.lock),
            hintText: '********',
            obsText: true,
            suffixIcon: true,
@@ -102,16 +107,27 @@ SizedBox(height: 53.h,),
          Row(
            children: [
              Text('Have an account? ',style: TextDimensions.style12RajdhaniW600White,),
-             Text('Sign in',style: TextDimensions.style12RajdhaniW600BlueUnderline,),
+             GestureDetector(
+               onTap: (){
+                 Navigator.push(context, MaterialPageRoute(builder: (context){
+                   return SignInScreen();
+                 }));
+               },
+                 child: Text('Sign in',style: TextDimensions.style12RajdhaniW600BlueUnderline,)),
 
 
            ],
          ),
          SizedBox(height: 30.h,),
-         Container(height: 52.h,
-           width: 350.w,
-           color:AppColors.darkBlue,
-           child: Center(child: Text('SIGN UP & ACCEPT',style: TextDimensions.style17RajdhaniW600White,)),
+         GestureDetector(
+           onTap: (){
+             register(context, email, password, lastName, supportGroupController, firstName);
+           },
+           child: Container(height: 52.h,
+             width: 350.w,
+             color:AppColors.darkBlue,
+             child: Center(child: Text('SIGN UP & ACCEPT',style: TextDimensions.style17RajdhaniW600White,)),
+           ),
          ),
          SizedBox(height: 15.h,),
          // Text('By tapping “Sign Up & Accept”, you acknowledge that you have read the Privacy Policy and agreed to the Terms of Service.',style: TextDimensions.style12RajdhaniW600White,)

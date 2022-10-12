@@ -59,7 +59,7 @@ class Test extends StatelessWidget {
       body: Container(
         child: Center(child:
         CustomTextField(
-          icon: Icons.person,
+          icon: Icon(Icons.lock),
           hintText: 'DD-MM-YY',
           height: 52.h,
           width: 350.w,

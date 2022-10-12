@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ichat/chat_screen.dart';
 import 'package:ichat/database_services.dart';
 import 'package:ichat/helper_functions.dart';
+import 'package:ichat/text_dimensions.dart';
 
+import 'app_colors.dart';
 import 'chat.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -81,56 +85,55 @@ children: [
         itemCount: searchResultSnapshot!.docs.length,
         itemBuilder: (context, index){
           return userTile(
-            searchResultSnapshot!.docs[index]["fullName"],
+            searchResultSnapshot!.docs[index]["firstname"],
             searchResultSnapshot!.docs[index]["email"],
           );
         }) : Container();
   }
   Widget userTile(String userName,String userEmail){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                userName,
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16
-                ),
-              ),
-              Text(
-                userEmail,
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16
-                ),
-              )
-            ],
-          ),
-          Spacer(),
-          GestureDetector(
-            onTap: (){
-              sendMessage(userName);
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
-              decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(24)
-              ),
-              child: Text("Message",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16
-                ),),
+    return
+      Container(
+        padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
+        height: 80.h ,
+        width: 350.w,
+
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+
+            CircleAvatar(radius: 50.r,
+              backgroundColor: AppColors.darkNavyBlue,
+              // backgroundImage: AssetImage('images/${images[index]}'),
             ),
-          )
-        ],
-      ),
-    );
+            // SizedBox(width: 5.w,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(userName,style: TextDimensions.style17RajdhaniW600White,),
+                SizedBox(height: 10.h,),
+                Text(userEmail,style: TextDimensions.style12RajdhaniW600White,)
+              ],),
+            SizedBox(width: 10.w,),
+            Column(
+              children: [
+                Text(''),
+                Container(height: 35.h,width: 80.w,
+                  decoration: BoxDecoration(
+                      color: AppColors.darkBlue,
+                      borderRadius: BorderRadius.circular(6.r)
+                  ),
+                  alignment: Alignment.center,
+                  child: Text('Message',style: TextDimensions.style15RajdhaniW400White,),
+                ),
+
+
+              ],
+            ),
+            // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
+
+
+          ],),
+      );
   }
   String sortChatId(String chatRoomId){
     List<String> sortedString = chatRoomId.split("");

@@ -23,7 +23,7 @@ body: Container(
       Text('Support Groups',style: TextDimensions.style36RajdhaniW700White,),
       SizedBox(height: 20.h,),
       CustomTextField(
-        icon: Icons.search,
+        icon:Icon( Icons.search),
         hintText: 'Search...',
         prefixIcon: true,
         obsText: false,
