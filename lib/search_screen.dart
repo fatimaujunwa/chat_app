@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ichat/chat_screen.dart';
+import 'package:ichat/chatroom.dart';
 import 'package:ichat/database_services.dart';
 import 'package:ichat/helper_functions.dart';
 import 'package:ichat/text_dimensions.dart';
@@ -153,7 +154,7 @@ children: [
 DatabaseServices(uid: widget.uid).addChatRoom(chatRoom, chatRoomId);
 
     Navigator.push(context, MaterialPageRoute(
-        builder: (context) => Chat(
+        builder: (context) => ChatRoomScreen(
           chatRoomId: chatRoomId,
           uid:widget.uid,
 

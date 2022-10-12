@@ -12,6 +12,8 @@ class DatabaseServices {
       FirebaseFirestore.instance.collection("chatroom");
   final CollectionReference addressCollection =
       FirebaseFirestore.instance.collection("address");
+  final CollectionReference latestChatCollection =
+  FirebaseFirestore.instance.collection("latestChats");
   //in each document add the user info
   Future updateUserData(String firstname, String email, String groupName,String lastname) async {
     userCollection.doc(uid).collection('groups').add({
@@ -28,6 +30,7 @@ class DatabaseServices {
 
   }
 
+
   // getting user data
   Future<QuerySnapshot> gettingUserData(String email) async {
     QuerySnapshot snapshot =
@@ -41,7 +44,11 @@ class DatabaseServices {
         await userCollection.where("email", isEqualTo: searchField).get();
     return snapshot;
   }
+  //latest chat
+  Future latestChat(chatRoomId,chat) async {
 
+    return await latestChatCollection.doc(chatRoomId).set(chat);
+  }
   //create chat room for two users
   Future addChatRoom(chatRoom, chatRoomId) async {
     return await chatRoomCollection.doc(chatRoomId).set(chatRoom);
@@ -61,6 +68,9 @@ class DatabaseServices {
 
 
 
+  }
+  getLatestChats(){
+    return latestChatCollection.snapshots();
   }
 
   //creating group

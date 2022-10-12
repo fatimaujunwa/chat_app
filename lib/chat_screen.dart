@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ichat/app_colors.dart';
+import 'package:ichat/chatroom.dart';
 import 'package:ichat/custom_textfield.dart';
 import 'package:ichat/text_dimensions.dart';
 
@@ -21,6 +22,7 @@ var uid;
 
 class _ChatScreenState extends State<ChatScreen> {
   bool haveUserSearched = false;
+  bool tapped=false;
   QuerySnapshot? searchResultSnapshot;
   initiateSearch(TextEditingController searchEditingController) async {
     if(searchEditingController.text.isNotEmpty){
@@ -34,7 +36,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
     }
   }
-
   getChatRoomId(String? a, String b) {
     if (a!.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
       return "$b\_$a";
@@ -42,6 +43,62 @@ class _ChatScreenState extends State<ChatScreen> {
       return "$a\_$b";
     }
   }
+  chatMessages()  {
+    return StreamBuilder(
+      stream:   DatabaseServices(uid: widget.uid).getLatestChats(),
+      builder: (context, AsyncSnapshot snapshot){
+        return snapshot.hasData ?
+        ListView.builder(
+          shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index){
+              return
+                Column(
+
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
+                      height: 80.h ,
+                      width: 350.w,
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+
+                          CircleAvatar(radius: 50.r,
+                            backgroundColor: AppColors.darkNavyBlue,
+                            backgroundImage: AssetImage('images/image1.jpg'),
+                          ),
+                          // SizedBox(width: 5.w,),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text( searchResultSnapshot!.docs[index]["firstname"],style: TextDimensions.style17RajdhaniW600White,),
+                              SizedBox(height: 10.h,),
+                              Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
+                            ],),
+                          SizedBox(width: 10.w,),
+                          Column(
+                            children: [
+                              Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
+                              SizedBox(height: 10.h,),
+                              CircleAvatar(radius: 10,backgroundColor: AppColors.darkBlue,child: Text('5'),),
+                            ],
+                          ),
+                          // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
+
+
+                        ],),
+                    ),
+                    Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
+                  ],
+                );
+            }) : Container(height: 10,width: 10,color: Colors.red,);
+      },
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -97,6 +154,9 @@ Column(
     CustomTextField(
       icon: InkWell(
         onTap: (){
+          setState(() {
+            tapped=false;
+          });
           initiateSearch(search);
         },
         child: Icon(Icons.search),),
@@ -111,53 +171,9 @@ Column(
     ),
     SizedBox(height: 8.h,),
 
-    haveUserSearched?userList(): ListView.builder(
-        shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: images.length,
-          itemBuilder: (_,index){
-        return
-          Column(
+    haveUserSearched?userList():
 
-          children: [
-            Container(
-padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-              height: 80.h ,
-              width: 350.w,
-
-              child: Row(
-mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-
-                CircleAvatar(radius: 50.r,
-                  backgroundColor: AppColors.darkNavyBlue,
-                backgroundImage: AssetImage('images/${images[index]}'),
-                ),
-                  // SizedBox(width: 5.w,),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Text('Ujunwa Fatima',style: TextDimensions.style17RajdhaniW600White,),
-                      SizedBox(height: 10.h,),
-                    Text('hey, can you help me get that..',style: TextDimensions.style12RajdhaniW600White,)
-                  ],),
-                  SizedBox(width: 10.w,),
-                  Column(
-                    children: [
-                      Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
-                     SizedBox(height: 10.h,),
-                     CircleAvatar(radius: 10,backgroundColor: AppColors.darkBlue,child: Text('5'),),
-                    ],
-                  ),
-                  // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
-
-
-              ],),
-            ),
-            Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
-          ],
-        );
-    })
+  chatMessages()
   ],
 ),
 
@@ -166,11 +182,16 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
     );
   }
   Widget userList(){
-    return haveUserSearched ? ListView.builder(
+    return haveUserSearched ?  tapped?
+
+
+        chatMessages(): ListView.builder(
         shrinkWrap: true,
         itemCount: searchResultSnapshot!.docs.length,
         itemBuilder: (context, index){
-          return userTile(
+          return
+
+            userTile(
             searchResultSnapshot!.docs[index]["firstname"],
             searchResultSnapshot!.docs[index]["email"],
           );
@@ -178,47 +199,55 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
   }
   Widget userTile(String userName,String userEmail){
     return
-      Container(
-        padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-        height: 80.h ,
-        width: 350.w,
+      GestureDetector(
+        onTap: (){
+          // sendMessage(userName);
+          setState(() {
+            tapped=true;
+          });
+        },
+        child: Container(
+          padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
+          height: 80.h ,
+          width: 350.w,
 
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
 
-            CircleAvatar(radius: 50.r,
-              backgroundColor: AppColors.middleShadeNavyBlue,
-              // backgroundImage: AssetImage('images/${images[index]}'),
-            ),
-            // SizedBox(width: 5.w,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(userName,style: TextDimensions.style17RajdhaniW600White,),
-                SizedBox(height: 10.h,),
-                Text(userEmail,style: TextDimensions.style12RajdhaniW600White,)
-              ],),
-            SizedBox(width: 10.w,),
-            Column(
-              children: [
-                Text(''),
-                Container(height: 35.h,width: 80.w,
-                  decoration: BoxDecoration(
-                      color: AppColors.darkBlue,
-                      borderRadius: BorderRadius.circular(6.r)
+              CircleAvatar(radius: 50.r,
+                backgroundColor: AppColors.middleShadeNavyBlue,
+                // backgroundImage: AssetImage('images/${images[index]}'),
+              ),
+              // SizedBox(width: 5.w,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(userName,style: TextDimensions.style17RajdhaniW600White,),
+                  SizedBox(height: 10.h,),
+                  Text(userEmail,style: TextDimensions.style12RajdhaniW600White,)
+                ],),
+              SizedBox(width: 10.w,),
+              Column(
+                children: [
+                  Text(''),
+                  Container(height: 35.h,width: 80.w,
+                    decoration: BoxDecoration(
+                        color: AppColors.darkBlue,
+                        borderRadius: BorderRadius.circular(6.r)
+                    ),
+                    alignment: Alignment.center,
+                    child: Text('Message',style: TextDimensions.style15RajdhaniW400White,),
                   ),
-                  alignment: Alignment.center,
-                  child: Text('Message',style: TextDimensions.style15RajdhaniW400White,),
-                ),
 
 
-              ],
-            ),
-            // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
+                ],
+              ),
+              // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
 
 
-          ],),
+            ],),
+        ),
       );
   }
   String sortChatId(String chatRoomId){
@@ -239,7 +268,7 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
     DatabaseServices(uid: widget.uid).addChatRoom(chatRoom, chatRoomId);
 
     Navigator.push(context, MaterialPageRoute(
-        builder: (context) => Chat(
+        builder: (context) => ChatRoomScreen(
           chatRoomId: chatRoomId,
           uid:widget.uid,
 
