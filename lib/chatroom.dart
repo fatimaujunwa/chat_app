@@ -84,6 +84,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
         };
         Map<String,dynamic>chat={
+          "sendBy":await HelperFunctions.getUserNameFromSF(),
           "message": messageEditingController.text,
           'time': DateTime
               .now()
@@ -111,7 +112,18 @@ DatabaseServices(uid: widget.uid).latestChat(widget.chatRoomId, chat);
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(child: Row(children: [
-                  Icon(Icons.arrow_back_ios,size: 20,color: AppColors.whiteColor,),
+                  InkWell(
+                    onTap: (){
+                      // Map<String,dynamic>chat={
+                      //   "sendBy":sender,
+                      //
+                      //   'time': DateTime
+                      //       .now()
+                      // };
+                      // DatabaseServices(uid: widget.uid).latestChat(widget.chatRoomId, chat);
+                      Navigator.pop(context);
+                    },
+                      child: Icon(Icons.arrow_back_ios,size: 20,color: AppColors.whiteColor,)),
                   SizedBox(width: 10.w,),
                   CircleAvatar(radius: 35.r,
                     backgroundColor: AppColors.darkNavyBlue,

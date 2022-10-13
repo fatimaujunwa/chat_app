@@ -31,7 +31,7 @@ HelperFunctions.saveUserEmailSF(emailController);
 HelperFunctions.saveUserNameSF(querySnapshot.docs[0]['firstname']);
 print(querySnapshot.docs[0]['firstname']);
 Navigator.push(context, MaterialPageRoute(builder: (context){
-  return ChatScreen(uid: FirebaseAuth.instance.currentUser!.uid);
+  return ChatScreen(uid: FirebaseAuth.instance.currentUser!.uid,username:querySnapshot.docs[0]['firstname']);
 }));
           }
     }

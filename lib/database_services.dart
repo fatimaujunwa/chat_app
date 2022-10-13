@@ -44,6 +44,14 @@ class DatabaseServices {
         await userCollection.where("email", isEqualTo: searchField).get();
     return snapshot;
   }
+
+  //search latest chat
+
+  Future<QuerySnapshot> searchLatestChats(String searchField) async {
+    QuerySnapshot snapshot =
+    await latestChatCollection.where("sendBy", isEqualTo: searchField).get();
+    return snapshot;
+  }
   //latest chat
   Future latestChat(chatRoomId,chat) async {
 

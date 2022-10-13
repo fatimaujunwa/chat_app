@@ -14,8 +14,9 @@ import 'database_services.dart';
 import 'helper_functions.dart';
 
 class ChatScreen extends StatefulWidget {
-   ChatScreen({Key? key,required this.uid}) : super(key: key);
+   ChatScreen({Key? key,required this.uid,required this.username}) : super(key: key);
 var uid;
+var username;
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -23,7 +24,9 @@ var uid;
 class _ChatScreenState extends State<ChatScreen> {
   bool haveUserSearched = false;
   bool tapped=false;
+  var sender='';
   QuerySnapshot? searchResultSnapshot;
+  QuerySnapshot? searchLatestSnapshot;
   initiateSearch(TextEditingController searchEditingController) async {
     if(searchEditingController.text.isNotEmpty){
       await DatabaseServices(uid: widget.uid).searchUser(searchEditingController.text).then((value) {
@@ -36,6 +39,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
     }
   }
+  getUser() async {
+
+    await HelperFunctions.getUserNameFromSF().then((value) {
+      sender=value!;
+    });
+    print('chats'+sender.toString());
+  }
   getChatRoomId(String? a, String b) {
     if (a!.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
       return "$b\_$a";
@@ -43,6 +53,19 @@ class _ChatScreenState extends State<ChatScreen> {
       return "$a\_$b";
     }
   }
+  latestMessages() async {
+
+    await DatabaseServices(uid: widget.uid).searchLatestChats('ada'
+    ).then((value) {
+      searchLatestSnapshot = value;
+      // print('${searchLatestSnapshot!.docs.length}');
+      // setState(() {
+      //   haveUserSearched=true;
+      // });
+      Future.delayed(Duration(seconds: 5));
+    });
+  }
+
   chatMessages()  {
     return StreamBuilder(
       stream:   DatabaseServices(uid: widget.uid).getLatestChats(),
@@ -74,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text( searchResultSnapshot!.docs[index]["firstname"],style: TextDimensions.style17RajdhaniW600White,),
+                              Text( '',style: TextDimensions.style17RajdhaniW600White,),
                               SizedBox(height: 10.h,),
                               Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
                             ],),
@@ -98,16 +121,76 @@ class _ChatScreenState extends State<ChatScreen> {
       },
     );
   }
+  Widget LatestChats(){
+    return  FutureBuilder(
+      future: DatabaseServices(uid: widget.uid).searchLatestChats(sender
+      ),
+      builder: (context,AsyncSnapshot<QuerySnapshot> snapshot ){
+        return snapshot.hasData ?  ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index){
+              return
+                Column(
+
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
+                      height: 80.h ,
+                      width: 350.w,
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+
+                          CircleAvatar(radius: 50.r,
+                            backgroundColor: AppColors.darkNavyBlue,
+                            backgroundImage: AssetImage('images/image1.jpg'),
+                          ),
+                          // SizedBox(width: 5.w,),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(snapshot.data!.docs[index]["sendBy"],style: TextDimensions.style17RajdhaniW600White,),
+                              SizedBox(height: 10.h,),
+                              Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
+                            ],),
+                          SizedBox(width: 10.w,),
+                          Column(
+                            children: [
+                              Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
+                              SizedBox(height: 10.h,),
+                              CircleAvatar(radius: 10,backgroundColor: AppColors.darkBlue,child: Text('5'),),
+                            ],
+                          ),
+                          // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
+
+
+                        ],),
+                    ),
+                    Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
+                  ],
+                );
+            }):Container();
+      },
+
+
+    );
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getUser();
+// latestMessages();
 
   }
 
   @override
   Widget build(BuildContext context) {
+
     List <String> images=['image1.jpg','image2.jpg','image3.jpg',
       'image5.jpg','image6.jpg','image7.jpg','image8.jpg','image9.jpg'
 
@@ -172,8 +255,8 @@ Column(
     SizedBox(height: 8.h,),
 
     haveUserSearched?userList():
-
-  chatMessages()
+// chatMessages()
+LatestChats()
   ],
 ),
 
@@ -181,11 +264,13 @@ Column(
       ),
     );
   }
+
+
   Widget userList(){
-    return haveUserSearched ?  tapped?
+    return haveUserSearched ?
 
 
-        chatMessages(): ListView.builder(
+        ListView.builder(
         shrinkWrap: true,
         itemCount: searchResultSnapshot!.docs.length,
         itemBuilder: (context, index){
@@ -201,9 +286,9 @@ Column(
     return
       GestureDetector(
         onTap: (){
-          // sendMessage(userName);
+          sendMessage(userName);
           setState(() {
-            tapped=true;
+            haveUserSearched=false;
           });
         },
         child: Container(
