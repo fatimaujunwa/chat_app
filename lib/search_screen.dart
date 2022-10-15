@@ -157,7 +157,8 @@ DatabaseServices(uid: widget.uid).addChatRoom(chatRoom, chatRoomId);
         builder: (context) => ChatRoomScreen(
           chatRoomId: chatRoomId,
           uid:widget.uid,
-
+sendTo: '',
+          sentFrom: '',
         )
     ));
 

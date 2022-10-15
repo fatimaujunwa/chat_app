@@ -44,7 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
     await HelperFunctions.getUserNameFromSF().then((value) {
       sender=value!;
     });
-    print('chats'+sender.toString());
+
   }
   getChatRoomId(String? a, String b) {
     if (a!.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
@@ -53,18 +53,20 @@ class _ChatScreenState extends State<ChatScreen> {
       return "$a\_$b";
     }
   }
-  latestMessages() async {
-
-    await DatabaseServices(uid: widget.uid).searchLatestChats('ada'
-    ).then((value) {
-      searchLatestSnapshot = value;
-      // print('${searchLatestSnapshot!.docs.length}');
-      // setState(() {
-      //   haveUserSearched=true;
-      // });
-      Future.delayed(Duration(seconds: 5));
-    });
+  
+ Future <void> create() async {
+   await showModalBottomSheet(context: context, builder: (BuildContext context){
+     return Container(
+       child: Column(children: [
+         Text('Create Group',style: TextDimensions.style36RajdhaniW700White,),
+         SizedBox(height: 20.h,)
+         CustomTextField(controller: controller, color: color, icon: icon)
+       ],),
+     );
+   });
   }
+  
+
 
   chatMessages()  {
     return StreamBuilder(
@@ -122,11 +124,13 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
   Widget LatestChats(){
-    return  FutureBuilder(
-      future: DatabaseServices(uid: widget.uid).searchLatestChats(sender
+    return  StreamBuilder(
+      stream: DatabaseServices(uid: widget.uid).searchLatestChats(widget.username
       ),
       builder: (context,AsyncSnapshot<QuerySnapshot> snapshot ){
-        return snapshot.hasData ?  ListView.builder(
+
+        return snapshot.hasData ?
+        ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: snapshot.data!.docs.length,
@@ -140,39 +144,49 @@ class _ChatScreenState extends State<ChatScreen> {
                       height: 80.h ,
                       width: 350.w,
 
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                      child: GestureDetector(
+                        onTap: ()=> sendMessage(snapshot.data!.docs[index]["sendTo"]),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
 
-                          CircleAvatar(radius: 50.r,
-                            backgroundColor: AppColors.darkNavyBlue,
-                            backgroundImage: AssetImage('images/image1.jpg'),
-                          ),
-                          // SizedBox(width: 5.w,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(snapshot.data!.docs[index]["sendBy"],style: TextDimensions.style17RajdhaniW600White,),
-                              SizedBox(height: 10.h,),
-                              Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
-                            ],),
-                          SizedBox(width: 10.w,),
-                          Column(
-                            children: [
-                              Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
-                              SizedBox(height: 10.h,),
-                              CircleAvatar(radius: 10,backgroundColor: AppColors.darkBlue,child: Text('5'),),
-                            ],
-                          ),
-                          // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
+                            CircleAvatar(radius: 50.r,
+                              backgroundColor: AppColors.darkNavyBlue,
+                              backgroundImage: AssetImage('images/image1.jpg'),
+                            ),
+                            // SizedBox(width: 5.w,),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(snapshot.data!.docs[index]["sendTo"]??'',style: TextDimensions.style17RajdhaniW600White,),
+                                SizedBox(height: 10.h,),
+                                Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
+                              ],),
+                            SizedBox(width: 10.w,),
+                            Column(
+                              children: [
+                                Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
+                                SizedBox(height: 10.h,),
+                                CircleAvatar(radius: 10,backgroundColor: AppColors.darkBlue,child: Text('5'),),
+                              ],
+                            ),
+                            // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
 
 
-                        ],),
+                          ],),
+                      ),
                     ),
                     Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
                   ],
                 );
-            }):Container();
+            }):Center(
+              child: Container(
+          height: 100,
+          width: 100,
+          color: Colors.red,
+
+        ),
+            );
       },
 
 
@@ -184,7 +198,10 @@ class _ChatScreenState extends State<ChatScreen> {
     // TODO: implement initState
     super.initState();
     getUser();
+    print('chats'+sender.toString());
 // latestMessages();
+    DatabaseServices(uid: widget.uid).searchLatestChats(sender
+    );
 
   }
 
@@ -280,7 +297,12 @@ LatestChats()
             searchResultSnapshot!.docs[index]["firstname"],
             searchResultSnapshot!.docs[index]["email"],
           );
-        }) : Container();
+        }) :  Container(
+      height: 100,
+      width: 100,
+      color: Colors.blue,
+
+    );
   }
   Widget userTile(String userName,String userEmail){
     return
@@ -356,7 +378,8 @@ LatestChats()
         builder: (context) => ChatRoomScreen(
           chatRoomId: chatRoomId,
           uid:widget.uid,
-
+sendTo:userName,
+          sentFrom:widget.username
         )
     ));
 

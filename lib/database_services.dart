@@ -47,10 +47,10 @@ class DatabaseServices {
 
   //search latest chat
 
-  Future<QuerySnapshot> searchLatestChats(String searchField) async {
-    QuerySnapshot snapshot =
-    await latestChatCollection.where("sendBy", isEqualTo: searchField).get();
-    return snapshot;
+  Stream<QuerySnapshot<Object?>> searchLatestChats(String searchField){
+    Stream<QuerySnapshot> snapshot =
+   latestChatCollection.where("sendBy", isEqualTo: searchField).snapshots();
+   return snapshot;
   }
   //latest chat
   Future latestChat(chatRoomId,chat) async {

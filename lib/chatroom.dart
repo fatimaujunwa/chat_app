@@ -11,10 +11,11 @@ import 'package:ichat/text_dimensions.dart';
 import 'helper_functions.dart';
 
 class ChatRoomScreen extends StatefulWidget {
-   ChatRoomScreen({Key? key,required this.chatRoomId,required this.uid}) : super(key: key);
+   ChatRoomScreen({Key? key,required this.chatRoomId,required this.uid,required this.sendTo,required this.sentFrom}) : super(key: key);
   final String chatRoomId;
-
+var sendTo;
   var uid;
+  var sentFrom;
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -84,6 +85,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
         };
         Map<String,dynamic>chat={
+          "sendTo":widget.sendTo,
           "sendBy":await HelperFunctions.getUserNameFromSF(),
           "message": messageEditingController.text,
           'time': DateTime
@@ -134,9 +136,9 @@ DatabaseServices(uid: widget.uid).latestChat(widget.chatRoomId, chat);
                 ],),),
 
                 Column(children: [
-                  Text('Ujunwa Peter',style: TextDimensions.style15RajdhaniW400White,),
+                  Text(widget.sendTo,style: TextDimensions.style15RajdhaniW400White,),
                   SizedBox(height: 10.h,),
-                  Text('Ujunwa Fatima',style: TextDimensions.style15RajdhaniW400White,),
+                  Text(widget.sentFrom,style: TextDimensions.style15RajdhaniW400White,),
                 ],)
               ],
             ),
