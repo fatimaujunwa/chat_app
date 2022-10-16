@@ -54,15 +54,16 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
   
- Future <void> create() async {
+ Future <void> create(TextEditingController controller) async {
    await showModalBottomSheet(context: context, builder: (BuildContext context){
      return Container(
+       height:150.h,width: 150.w,
        child: Column(children: [
          Text('Create Group',style: TextDimensions.style36RajdhaniW700White,),
-         SizedBox(height: 20.h,)
-         CustomTextField(controller: controller, color: color, icon: icon)
+         SizedBox(height: 20.h,),
+         CustomTextField(controller: controller, color: AppColors.middleShadeNavyBlue, icon: Icon(Icons.message))
        ],),
-     );
+     )  ;
    });
   }
   
@@ -213,12 +214,16 @@ class _ChatScreenState extends State<ChatScreen> {
 
     ];
     TextEditingController search =TextEditingController();
+    TextEditingController groupName =TextEditingController();
     return Scaffold(
       backgroundColor: AppColors.darkNavyBlue,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.darkBlue,
-        onPressed: () {},
+        onPressed: () {
+          create(groupName);
+
+        },
         child: Icon(Icons.add),
       ),
         bottomNavigationBar: FloatingNavbar(
