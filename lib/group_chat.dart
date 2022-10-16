@@ -8,8 +8,9 @@ import 'chat.dart';
 import 'custom_textfield.dart';
 
 class GroupChatRoom extends StatelessWidget {
-  const GroupChatRoom({Key? key}) : super(key: key);
-
+  const GroupChatRoom({Key? key,required this.admin, required this.groupName }) : super(key: key);
+final String admin;
+final String groupName;
   @override
   Widget build(BuildContext context) {
     TextEditingController messageEditingController= TextEditingController();
@@ -29,7 +30,8 @@ class GroupChatRoom extends StatelessWidget {
                       SizedBox(width: 10.w,),
                       CircleAvatar(radius: 40.r,
                         backgroundColor: AppColors.middleShadeNavyBlue,
-                        child: Text("HI",style: TextDimensions.style36RajdhaniW700White,),
+                        child: Text(groupName.substring(0, 2)
+                            .toUpperCase(),style: TextDimensions.style36RajdhaniW700White,),
                         // backgroundImage: AssetImage('images/${images[index]}'),
                       ),
                       SizedBox(width: 70.w,),
@@ -49,11 +51,11 @@ class GroupChatRoom extends StatelessWidget {
                         children: [
 
                           Text('Group Admin: ',style: TextDimensions.style15RajdhaniW400White,),
-                          Text('Ujunwa Peter',style: TextDimensions.style15RajdhaniW400White,),
+                          Text(admin,style: TextDimensions.style15RajdhaniW400White,),
                         ],
                       ),
                       SizedBox(height: 10.h,),
-                      Text('HIV SUPPORT GROUP',style: TextDimensions.style17RajdhaniW600White,),
+                      Text(groupName,style: TextDimensions.style17RajdhaniW600White,),
                     ],)
                   ],
                 ),

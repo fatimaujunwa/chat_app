@@ -83,7 +83,8 @@ class DatabaseServices {
 
   //creating group
   Future createGroup(String userName, String id, String groupName) async {
-    DocumentReference groupDocumentReference = await groupCollection.add({
+    DocumentReference groupDocumentReference = await groupCollection.add(
+        {
       "groupName": groupName,
       "groupIcon": "",
       "admin": "${id}_$userName",
@@ -91,7 +92,8 @@ class DatabaseServices {
       "groupId": "",
       "recentMessage": "",
       "recentMessageSender": "",
-    });
+    }
+    );
 //after creating group name and all set the person that created as a first member
     await groupDocumentReference.update({
     "members": FieldValue.arrayUnion(["${uid}_$userName"]),

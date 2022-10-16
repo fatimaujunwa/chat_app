@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ichat/app_colors.dart';
 import 'package:ichat/chatroom.dart';
 import 'package:ichat/custom_textfield.dart';
+import 'package:ichat/group_chat.dart';
 import 'package:ichat/text_dimensions.dart';
 
 import 'chat.dart';
@@ -53,18 +54,61 @@ class _ChatScreenState extends State<ChatScreen> {
       return "$a\_$b";
     }
   }
+
+  createGroup(String userName,String id, String groupName )async{
+   await DatabaseServices(uid: widget.uid).createGroup(userName, id, groupName);
+   Navigator.push(context, MaterialPageRoute(builder: (context){
+     return GroupChatRoom(admin:userName,groupName:groupName);
+   }));
+  }
   
  Future <void> create(TextEditingController controller) async {
-   await showModalBottomSheet(context: context, builder: (BuildContext context){
-     return Container(
-       height:150.h,width: 150.w,
-       child: Column(children: [
+   await showModalBottomSheet(
+     isScrollControlled: true
+,
+       context: context, builder: (BuildContext context){
+     return Padding(
+       padding:  EdgeInsets.only(left: 20.0.w,right: 20.w,top: 20.h,bottom: MediaQuery.of(context).viewInsets.bottom+20),
+       child: Column(
+         mainAxisSize: MainAxisSize.min,
+         children: [
          Text('Create Group',style: TextDimensions.style36RajdhaniW700White,),
          SizedBox(height: 20.h,),
-         CustomTextField(controller: controller, color: AppColors.middleShadeNavyBlue, icon: Icon(Icons.message))
+       CustomTextField(
+         icon: InkWell(
+           onTap: (){
+             setState(() {
+               tapped=false;
+             });
+
+           },
+           child: Icon(Icons.search),),
+         hintText: 'Group Name',
+         prefixIcon: true,
+         obsText: false,
+         suffixIcon: false,
+         height: 80.h,
+         width: 350.w,
+         color: AppColors.middleShadeNavyBlue,
+         controller: controller,
+       ),
+           SizedBox(height: 30.h,),
+           BlueContainer(text: 'Create',onPressed: (){
+createGroup(widget.username,widget.uid, controller.text.trim());
+           },),
+
        ],),
      )  ;
-   });
+   },
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20.0.r),
+      side: BorderSide(color: AppColors.lightNavyBlue)
+
+    ),
+backgroundColor: AppColors.darkNavyBlue,
+
+
+   );
   }
   
 
@@ -343,14 +387,7 @@ LatestChats()
               Column(
                 children: [
                   Text(''),
-                  Container(height: 35.h,width: 80.w,
-                    decoration: BoxDecoration(
-                        color: AppColors.darkBlue,
-                        borderRadius: BorderRadius.circular(6.r)
-                    ),
-                    alignment: Alignment.center,
-                    child: Text('Message',style: TextDimensions.style15RajdhaniW400White,),
-                  ),
+                  BlueContainer(onPressed: sendMessage(userName),),
 
 
                 ],
@@ -388,5 +425,29 @@ sendTo:userName,
         )
     ));
 
+  }
+}
+
+class BlueContainer extends StatelessWidget {
+  const BlueContainer({
+    Key? key,this.text='Message',
+   required this.onPressed
+  }) : super(key: key);
+final String text;
+final Function() onPressed;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap:onPressed,
+
+      child: Container(height: 35.h,width: 80.w,
+        decoration: BoxDecoration(
+            color: AppColors.darkBlue,
+            borderRadius: BorderRadius.circular(6.r)
+        ),
+        alignment: Alignment.center,
+        child: Text(text,style: TextDimensions.style15RajdhaniW400White,),
+      ),
+    );
   }
 }
