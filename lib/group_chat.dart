@@ -6,14 +6,79 @@ import 'package:ichat/text_dimensions.dart';
 import 'app_colors.dart';
 import 'chat.dart';
 import 'custom_textfield.dart';
+import 'database_services.dart';
+import 'helper_functions.dart';
 
-class GroupChatRoom extends StatelessWidget {
-  const GroupChatRoom({Key? key,required this.admin, required this.groupName }) : super(key: key);
+class GroupChatRoom extends StatefulWidget {
+  GroupChatRoom({Key? key,required this.admin, required this.groupName ,required this.uid}) : super(key: key);
 final String admin;
 final String groupName;
+var uid;
+
+  @override
+  State<GroupChatRoom> createState() => _GroupChatRoomState();
+}
+
+class _GroupChatRoomState extends State<GroupChatRoom> {
+  var sender='';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUser();
+  }
+  getUser() async {
+
+    await HelperFunctions.getUserNameFromSF().then((value) {
+      sender=value!;
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     TextEditingController messageEditingController= TextEditingController();
+    chatMessages()  {
+      return StreamBuilder(
+        stream:   DatabaseServices(uid: widget.uid).getGroupChats(widget.groupName),
+        builder: (context, AsyncSnapshot snapshot){
+          return snapshot.hasData ?  Expanded(
+            child: ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index){
+                  return MessageTile(
+                    message: snapshot.data!.docs[index]["message"],
+                    sendByMe: sender== snapshot.data!.docs[index]["sendBy"],
+                  );
+                }),
+          ) : Container();
+        },
+      );
+    }
+    addMessage() async {
+      if (messageEditingController.text.isNotEmpty) {
+        Map<String, dynamic> chatMessageMap = {
+          "sendBy":await HelperFunctions.getUserNameFromSF(),
+          "message": messageEditingController.text,
+          'time': DateTime
+              .now()
+
+        };
+        Map<String,dynamic>chat={
+
+          "sendBy":await HelperFunctions.getUserNameFromSF(),
+          "message": messageEditingController.text,
+          'time': DateTime
+              .now()
+        }
+        ;
+        DatabaseServices(uid:widget.uid).addGroupMessage(widget.groupName, chatMessageMap);
+        DatabaseServices(uid: widget.uid).latestGroupChat(widget.groupName, chat);
+
+        messageEditingController.clear();
+      }
+    }
+
     return Scaffold(
       backgroundColor: AppColors.darkNavyBlue,
       body: Stack(
@@ -30,7 +95,7 @@ final String groupName;
                       SizedBox(width: 10.w,),
                       CircleAvatar(radius: 40.r,
                         backgroundColor: AppColors.middleShadeNavyBlue,
-                        child: Text(groupName.substring(0, 2)
+                        child: Text(widget.groupName.substring(0, 2)
                             .toUpperCase(),style: TextDimensions.style36RajdhaniW700White,),
                         // backgroundImage: AssetImage('images/${images[index]}'),
                       ),
@@ -51,21 +116,19 @@ final String groupName;
                         children: [
 
                           Text('Group Admin: ',style: TextDimensions.style15RajdhaniW400White,),
-                          Text(admin,style: TextDimensions.style15RajdhaniW400White,),
+                          Text(widget.admin,style: TextDimensions.style15RajdhaniW400White,),
                         ],
                       ),
                       SizedBox(height: 10.h,),
-                      Text(groupName,style: TextDimensions.style17RajdhaniW600White,),
+                      Text(widget.groupName,style: TextDimensions.style17RajdhaniW600White,),
                     ],)
                   ],
                 ),
 
               ),
               Divider(color: AppColors.lightNavyBlue,),
-              MessageTile(message: 'hi', sendByMe:false),
-              MessageTile(message: 'hello', sendByMe:true),
-              MessageTile(message: 'hi my name is ', sendByMe:false),
-              MessageTile(message: 'hell i know', sendByMe:true)
+             chatMessages()
+
             ],
 
 
@@ -100,7 +163,7 @@ final String groupName;
                     SizedBox(width: 16,),
                     GestureDetector(
                       onTap: () {
-                        // addMessage();
+                        addMessage();
                       },
                       child: Icon(Icons.send,color: AppColors.darkBlue,size: 20,),
                     ),
