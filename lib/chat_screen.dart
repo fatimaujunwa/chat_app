@@ -10,12 +10,13 @@ import 'package:ichat/chatroom.dart';
 import 'package:ichat/custom_textfield.dart';
 import 'package:ichat/group_chat.dart';
 import 'package:ichat/groups.dart';
+import 'package:ichat/test.dart';
 import 'package:ichat/text_dimensions.dart';
 
 import 'chat.dart';
 import 'database_services.dart';
 import 'helper_functions.dart';
-enum _SelectedTab { home, favorite, search, person }
+
 class ChatScreen extends StatefulWidget {
    ChatScreen({Key? key,required this.uid,required this.username}) : super(key: key);
 var uid;
@@ -63,55 +64,8 @@ class _ChatScreenState extends State<ChatScreen> {
      return GroupChatRoom(admin:userName,groupName:groupName,uid:widget.uid);
    }));
   }
-  
- Future <void> create(TextEditingController controller) async {
-   await showModalBottomSheet(
-     isScrollControlled: true
-,
-       context: context, builder: (BuildContext context){
-     return Padding(
-       padding:  EdgeInsets.only(left: 20.0.w,right: 20.w,top: 20.h,bottom: MediaQuery.of(context).viewInsets.bottom+20),
-       child: Column(
-         mainAxisSize: MainAxisSize.min,
-         children: [
-         Text('Create Group',style: TextDimensions.style36RajdhaniW700White,),
-         SizedBox(height: 20.h,),
-       CustomTextField(
-         icon: InkWell(
-           onTap: (){
-             setState(() {
-               tapped=false;
-             });
-
-           },
-           child: Icon(Icons.search),),
-         hintText: 'Group Name',
-         prefixIcon: true,
-         obsText: false,
-         suffixIcon: false,
-         height: 80.h,
-         width: 350.w,
-         color: AppColors.middleShadeNavyBlue,
-         controller: controller,
-       ),
-           SizedBox(height: 30.h,),
-           BlueContainer(text: 'Create',onPressed: (){
-createGroup(widget.username,widget.uid, controller.text.trim());
-           },),
-
-       ],),
-     )  ;
-   },
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20.0.r),
-      side: BorderSide(color: AppColors.lightNavyBlue)
-
-    ),
-backgroundColor: AppColors.darkNavyBlue,
 
 
-   );
-  }
   
 
 
@@ -251,17 +205,11 @@ backgroundColor: AppColors.darkNavyBlue,
     );
 
   }
-  var _selectedTab = _SelectedTab.home;
 
-  void _handleIndexChanged(int i) {
-    setState(() {
-      _selectedTab = _SelectedTab.values[i];
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    var pages=[GroupListPage(uid: widget.uid, username: widget.username)];
+
     List <String> images=['image1.jpg','image2.jpg','image3.jpg',
       'image5.jpg','image6.jpg','image7.jpg','image8.jpg','image9.jpg'
 
@@ -269,117 +217,44 @@ backgroundColor: AppColors.darkNavyBlue,
 
     int currIndex=0;
     TextEditingController search =TextEditingController();
-    TextEditingController groupName =TextEditingController();
-    return Scaffold(
-      backgroundColor: AppColors.darkNavyBlue,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.darkBlue,
-        onPressed: () {
-          create(groupName);
 
-        },
-        child: Icon(Icons.add),
-      ),
-         bottomNavigationBar: Padding(
-    padding: EdgeInsets.only(bottom: 10),
-    child: DotNavigationBar(
-    margin: EdgeInsets.only(left: 10, right: 10),
-    currentIndex: _SelectedTab.values.indexOf(_selectedTab),
-    dotIndicatorColor: Colors.white,
-    unselectedItemColor: Colors.grey[300],
-    // enableFloatingNavBar: false,
-    onTap: _handleIndexChanged,
-    items: [
-    /// Home
-    DotNavigationBarItem(
-    icon: Icon(Icons.home),
-    selectedColor: Color(0xff73544C),
-    ),
+    return
+      Container(
+        margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
+        color: AppColors.darkNavyBlue,
+        child:
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Chats',style: TextDimensions.style36RajdhaniW700White,),
+            SizedBox(height: 20.h,),
+            CustomTextField(
+              icon: InkWell(
+                onTap: (){
+                  setState(() {
+                    tapped=false;
+                  });
+                  initiateSearch(search);
+                },
+                child: Icon(Icons.search),),
+              hintText: 'Search..',
+              prefixIcon: true,
+              obsText: false,
+              suffixIcon: false,
+              height: 80.h,
+              width: 350.w,
+              color: AppColors.middleShadeNavyBlue,
+              controller:  search,
+            ),
+            SizedBox(height: 8.h,),
 
-    /// Likes
-    DotNavigationBarItem(
-    icon: Icon(Icons.favorite),
-    selectedColor: Color(0xff73544C),
-    ),
+            haveUserSearched?userList():
+// chatMessages()
+            LatestChats()
+          ],
+        ),
 
-    /// Search
-    DotNavigationBarItem(
-    icon: Icon(Icons.search),
-    selectedColor: Color(0xff73544C),
-    ),
-
-    /// Profile
-    DotNavigationBarItem(
-    icon: Icon(Icons.person),
-    selectedColor: Color(0xff73544C),
-    ),
-    ],
-    ),
-        // FloatingNavbar(
-        //   selectedItemColor: AppColors.darkBlue,
-        //   unselectedItemColor: AppColors.darkNavyBlue,
-        //   backgroundColor: AppColors.whiteColor,
-        //   onTap: (int val) {
-        //     //returns tab id which is user tapped
-        //
-        //     currIndex=val;
-        //   },
-        //   currentIndex: currIndex,
-        //   items: [
-        //     FloatingNavbarItem(icon: Icons.home, title: 'Home',
-        //
-        //
-        //     ),
-        //     FloatingNavbarItem(icon: Icons.explore, title: 'Explore',customWidget: Container()),
-        //     FloatingNavbarItem(icon: Icons.chat_bubble_outline, title: 'Chats'),
-        //     FloatingNavbarItem(icon: Icons.settings, title: 'Settings'),
-        //   ],
-        // ),
-
-
-         ),body:
-      SingleChildScrollView(
-        child:pages[_selectedTab]
-
-//        Container(
-// margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
-//           color: AppColors.darkNavyBlue,
-// child:
-// Column(
-//   crossAxisAlignment: CrossAxisAlignment.stretch,
-//   children: [
-//     Text('Chats',style: TextDimensions.style36RajdhaniW700White,),
-//     SizedBox(height: 20.h,),
-//     CustomTextField(
-//       icon: InkWell(
-//         onTap: (){
-//           setState(() {
-//             tapped=false;
-//           });
-//           initiateSearch(search);
-//         },
-//         child: Icon(Icons.search),),
-//         hintText: 'Search..',
-//         prefixIcon: true,
-//         obsText: false,
-//         suffixIcon: false,
-//         height: 80.h,
-//         width: 350.w,
-//         color: AppColors.middleShadeNavyBlue,
-//         controller:  search,
-//     ),
-//     SizedBox(height: 8.h,),
-//
-//     haveUserSearched?userList():
-// // chatMessages()
-// LatestChats()
-//   ],
-// ),
-//
-//         ),
-      ),
-    );
+      );
   }
 
 
@@ -438,7 +313,11 @@ backgroundColor: AppColors.darkNavyBlue,
               Column(
                 children: [
                   Text(''),
-                  BlueContainer(onPressed: sendMessage(userName),),
+                  BlueContainer(onPressed: (){
+                    sendMessage(userName);
+
+                    haveUserSearched=false;
+                  },),
 
 
                 ],
@@ -479,17 +358,25 @@ sendTo:userName,
   }
 }
 
-class BlueContainer extends StatelessWidget {
+class BlueContainer extends StatefulWidget {
   const BlueContainer({
     Key? key,this.text='Message',
    required this.onPressed
   }) : super(key: key);
 final String text;
 final Function() onPressed;
+
+  @override
+  State<BlueContainer> createState() => _BlueContainerState();
+}
+
+class _BlueContainerState extends State<BlueContainer> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap:onPressed,
+      onTap:
+
+      widget.onPressed,
 
       child: Container(height: 35.h,width: 80.w,
         decoration: BoxDecoration(
@@ -497,7 +384,7 @@ final Function() onPressed;
             borderRadius: BorderRadius.circular(6.r)
         ),
         alignment: Alignment.center,
-        child: Text(text,style: TextDimensions.style15RajdhaniW400White,),
+        child: Text(widget.text,style: TextDimensions.style15RajdhaniW400White,),
       ),
     );
   }

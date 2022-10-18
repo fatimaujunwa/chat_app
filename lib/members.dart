@@ -5,9 +5,91 @@ import 'package:ichat/text_dimensions.dart';
 
 import 'app_colors.dart';
 import 'custom_textfield.dart';
+import 'database_services.dart';
 
-class MembersList extends StatelessWidget {
-  const MembersList({Key? key}) : super(key: key);
+class MembersList extends StatefulWidget {
+   MembersList({Key? key, required this.uid, required this.groupName}) : super(key: key);
+var uid;
+final String groupName;
+  @override
+  State<MembersList> createState() => _MembersListState();
+}
+
+class _MembersListState extends State<MembersList> {
+ members()  {
+    return StreamBuilder(
+      stream:   DatabaseServices(uid: widget.uid).getGroupMembers(widget.groupName),
+      builder: (context, AsyncSnapshot snapshot){
+        return snapshot.hasData ?
+        Column(children: [
+          Row(
+            children: [
+              Text(snapshot.data!.docs.length.toString(),style: TextDimensions.style36RajdhaniW700White,),
+              Text(' Member(s)',style: TextDimensions.style36RajdhaniW700White,),
+            ],
+          ),
+
+          ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (_,index){
+                return  Column(
+
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
+                      height: 80.h ,
+                      width: 350.w,
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+
+                          CircleAvatar(radius: 50.r,
+                            backgroundColor: AppColors.darkNavyBlue,
+                            // backgroundImage: AssetImage('images/${images[index]}'),
+                          ),
+                          // SizedBox(width: 5.w,),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(snapshot.data!.docs[index]["members"],style: TextDimensions.style17RajdhaniW600White,),
+                              SizedBox(height: 10.h,),
+                              Text('hey, can you help me get that..',style: TextDimensions.style12RajdhaniW600White,)
+                            ],),
+                          SizedBox(width: 10.w,),
+                          Column(
+                            children: [
+                              Text(''),
+                              Container(height: 35.h,width: 80.w,
+                                decoration: BoxDecoration(
+                                    color: AppColors.darkBlue,
+                                    borderRadius: BorderRadius.circular(6.r)
+                                ),
+                                alignment: Alignment.center,
+                                child: Text('Message',style: TextDimensions.style15RajdhaniW400White,),
+                              ),
+
+
+                            ],
+                          ),
+                          // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
+
+
+                        ],),
+                    ),
+                    Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
+                  ],
+                );
+
+
+
+              })
+        ],): Container(height: 10,width: 10,color: Colors.red,);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +105,6 @@ class MembersList extends StatelessWidget {
         // color: AppColors.darkNavyBlue,
         child: SingleChildScrollView(
           child: Column(children: [
-            Row(
-              children: [
-                Text('12 ',style: TextDimensions.style36RajdhaniW700White,),
-                Text('Members',style: TextDimensions.style36RajdhaniW700White,),
-              ],
-            ),
             SizedBox(height: 20.h,),
             CustomTextField(
               icon: Icon(Icons.search),
@@ -41,64 +117,9 @@ class MembersList extends StatelessWidget {
               color: AppColors.middleShadeNavyBlue,
               controller:  search,
             ),
-            ListView.builder(
-                itemCount: images.length,
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (_,index){
-                  return  Column(
+            members()
+          ],)
 
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-                        height: 80.h ,
-                        width: 350.w,
-
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-
-                            CircleAvatar(radius: 50.r,
-                              backgroundColor: AppColors.darkNavyBlue,
-                              backgroundImage: AssetImage('images/${images[index]}'),
-                            ),
-                            // SizedBox(width: 5.w,),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Maria Ujunwa',style: TextDimensions.style17RajdhaniW600White,),
-                                SizedBox(height: 10.h,),
-                                Text('hey, can you help me get that..',style: TextDimensions.style12RajdhaniW600White,)
-                              ],),
-                            SizedBox(width: 10.w,),
-                            Column(
-                              children: [
-                                Text(''),
-                              Container(height: 35.h,width: 80.w,
-                            decoration: BoxDecoration(
-                              color: AppColors.darkBlue,
-                              borderRadius: BorderRadius.circular(6.r)
-                            ),
-                                alignment: Alignment.center,
-                                child: Text('Message',style: TextDimensions.style15RajdhaniW400White,),
-                              ),
-
-
-                              ],
-                            ),
-                            // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
-
-
-                          ],),
-                      ),
-                      Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
-                    ],
-                  );
-
-
-
-                })
-          ],),
         ),
 
       ),

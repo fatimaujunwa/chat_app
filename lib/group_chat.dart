@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ichat/members.dart';
 import 'package:ichat/text_dimensions.dart';
 
 import 'app_colors.dart';
@@ -61,11 +62,14 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
           "sendBy":await HelperFunctions.getUserNameFromSF(),
           "message": messageEditingController.text,
           'time': DateTime
-              .now()
+              .now(),
+          "groupName":widget.groupName,
+          "groupIcon":widget.groupName.substring(0,2).toUpperCase(),
 
         };
         Map<String,dynamic>chat={
-
+"         groupName":widget.groupName,
+          "groupIcon":widget.groupName.substring(0,2).toUpperCase(),
           "sendBy":await HelperFunctions.getUserNameFromSF(),
           "message": messageEditingController.text,
           'time': DateTime
@@ -91,7 +95,10 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(child: Row(children: [
-                      Icon(Icons.arrow_back_ios,size: 20,color: AppColors.whiteColor,),
+                      InkWell(
+                        onTap: ()=>Navigator.pop(context),
+                        
+                          child: Icon(Icons.arrow_back_ios,size: 20,color: AppColors.whiteColor,)),
                       SizedBox(width: 10.w,),
                       CircleAvatar(radius: 40.r,
                         backgroundColor: AppColors.middleShadeNavyBlue,
@@ -103,13 +110,20 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
                     ],),),
 
                     Column(children: [
-                      Row(
-                        children: [
+                      GestureDetector(
+                        onTap:()=>Navigator.push(context, MaterialPageRoute(builder: (context){
+                          return MembersList(uid:widget.uid,groupName:widget.groupName);
+                        })),
+                        child: Container(
+                          child: Row(
+                            children: [
 
-                          SizedBox(width: 5.w,),
-                          Text('View members',style: TextDimensions.style15RajdhaniW400White,),
-                          Icon(Icons.arrow_right_alt_outlined,size: 20,color: AppColors.whiteColor,)
-                        ],
+                              SizedBox(width: 5.w,),
+                              Text('View members',style: TextDimensions.style15RajdhaniW400White,),
+                              Icon(Icons.arrow_right_alt_outlined,size: 20,color: AppColors.whiteColor,)
+                            ],
+                          ),
+                        ),
                       ),
                       SizedBox(height: 10.h,),
                       Row(

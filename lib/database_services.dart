@@ -57,6 +57,18 @@ class DatabaseServices {
     return snapshot;
   }
 
+  Stream<QuerySnapshot<Object?>> searchLatestGroupChats(String searchField) {
+    Stream<QuerySnapshot> snapshot = latestGroupChatCollection
+        .where("groupName", isEqualTo: searchField)
+        .snapshots();
+    return snapshot;
+  }
+
+  getGroups() {
+    return  latestGroupChatCollection
+        .snapshots();
+  }
+
   //latest chat
   Future latestChat(chatRoomId, chat) async {
     return await latestChatCollection.doc(chatRoomId).set(chat);
@@ -155,8 +167,8 @@ class DatabaseServices {
   }
 
   // get group members
-  getGroupMembers(groupId) async {
-    return groupCollection.doc(groupId).snapshots();
+  Stream getGroupMembers(String groupId)  {
+    return groupCollection.doc(groupId).collection("members").snapshots();
   }
 
   // search

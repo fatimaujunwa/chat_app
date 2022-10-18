@@ -12,6 +12,7 @@ import 'package:ichat/text_dimensions.dart';
 import 'app_colors.dart';
 import 'auth_services.dart';
 import 'custom_textfield.dart';
+import 'home_page.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ HelperFunctions.saveUserEmailSF(emailController);
 HelperFunctions.saveUserNameSF(querySnapshot.docs[0]['firstname']);
 print(querySnapshot.docs[0]['firstname']);
 Navigator.push(context, MaterialPageRoute(builder: (context){
-  return ChatScreen(uid: FirebaseAuth.instance.currentUser!.uid,username:querySnapshot.docs[0]['firstname']);
+  return HomePage(uid: FirebaseAuth.instance.currentUser!.uid,username:querySnapshot.docs[0]['firstname']);
 }));
           }
     }
