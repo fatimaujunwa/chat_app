@@ -48,6 +48,12 @@ class DatabaseServices {
     return snapshot;
   }
 
+  Future<QuerySnapshot> searchGroup(String searchField) async {
+    QuerySnapshot snapshot =
+    await latestGroupChatCollection.where("groupName", isEqualTo: searchField).get();
+    return snapshot;
+  }
+
   //search latest chat
 
   Stream<QuerySnapshot<Object?>> searchLatestChats(String searchField) {

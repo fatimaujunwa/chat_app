@@ -181,12 +181,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                 );
             }):Center(
-              child: Container(
-          height: 100,
-          width: 100,
-          color: Colors.red,
-
-        ),
+              child: CircularProgressIndicator(color: AppColors.darkBlue,),
             );
       },
 
@@ -229,7 +224,8 @@ class _ChatScreenState extends State<ChatScreen> {
             Text('Chats',style: TextDimensions.style36RajdhaniW700White,),
             SizedBox(height: 20.h,),
             CustomTextField(
-              icon: InkWell(
+              icon:
+              InkWell(
                 onTap: (){
                   setState(() {
                     tapped=false;
@@ -314,9 +310,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   Text(''),
                   BlueContainer(onPressed: (){
+                    setState(() {
+                      haveUserSearched=false;
+                    });
                     sendMessage(userName);
 
-                    haveUserSearched=false;
+
                   },),
 
 

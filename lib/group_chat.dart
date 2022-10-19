@@ -68,7 +68,7 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
 
         };
         Map<String,dynamic>chat={
-"         groupName":widget.groupName,
+          "groupName":widget.groupName,
           "groupIcon":widget.groupName.substring(0,2).toUpperCase(),
           "sendBy":await HelperFunctions.getUserNameFromSF(),
           "message": messageEditingController.text,

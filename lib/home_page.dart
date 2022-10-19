@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: AppColors.darkBlue,
         onPressed: () {
           create(groupName);
-
+Navigator.pop(context);
         },
         child: Icon(Icons.add),
       ),
@@ -115,19 +115,19 @@ class _HomePageState extends State<HomePage> {
           items: [
             /// Home
             DotNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.messenger_rounded),
               selectedColor: Color(0xff73544C),
             ),
 
             /// Likes
             DotNavigationBarItem(
-              icon: Icon(Icons.favorite),
+              icon: Icon(Icons.group),
               selectedColor: Color(0xff73544C),
             ),
 
             /// Search
             DotNavigationBarItem(
-              icon: Icon(Icons.search),
+              icon: Icon(Icons.group_remove_sharp),
               selectedColor: Color(0xff73544C),
             ),
 

@@ -55,8 +55,7 @@ class _MembersListState extends State<MembersList> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(snapshot.data!.docs[index]["members"],style: TextDimensions.style17RajdhaniW600White,),
-                              SizedBox(height: 10.h,),
-                              Text('hey, can you help me get that..',style: TextDimensions.style12RajdhaniW600White,)
+
                             ],),
                           SizedBox(width: 10.w,),
                           Column(
@@ -86,7 +85,7 @@ class _MembersListState extends State<MembersList> {
 
 
               })
-        ],): Container(height: 10,width: 10,color: Colors.red,);
+        ],): Center(child: CircularProgressIndicator(color: AppColors.darkBlue,));
       },
     );
   }
