@@ -74,11 +74,19 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
           "message": messageEditingController.text,
           'time': DateTime
               .now()
-        }
+        };
+        Map<String,dynamic>userGroupChat=      {
+    "sendBy":await HelperFunctions.getUserNameFromSF(),
+    "message":messageEditingController.text,
+    'time': DateTime
+        .now(),
+    "groupName":widget.groupName,
+    "groupIcon":widget.groupName.substring(0,2).toUpperCase()
+  }
         ;
         DatabaseServices(uid:widget.uid).addGroupMessage(widget.groupName, chatMessageMap);
         DatabaseServices(uid: widget.uid).latestGroupChat(widget.groupName, chat);
-
+DatabaseServices(uid: widget.uid).updateUserGroupMessages(widget.groupName,userGroupChat);
         messageEditingController.clear();
       }
     }

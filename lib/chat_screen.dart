@@ -357,6 +357,36 @@ sendTo:userName,
   }
 }
 
+class WhiteContainer extends StatefulWidget {
+  const WhiteContainer({Key? key,this.text='Leave',
+    required this.onPressed}) : super(key: key);
+  final String text;
+  final Function() onPressed;
+  @override
+  State<WhiteContainer> createState() => _WhiteContainerState();
+}
+
+class _WhiteContainerState extends State<WhiteContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap:
+
+      widget.onPressed,
+
+      child: Container(height: 35.h,width: 80.w,
+        decoration: BoxDecoration(
+            color: AppColors.whiteColor,
+            borderRadius: BorderRadius.circular(6.r)
+        ),
+        alignment: Alignment.center,
+        child: Text(widget.text,style: TextDimensions.style15RajdhaniW400White,),
+      ),
+    );
+  }
+}
+
+
 class BlueContainer extends StatefulWidget {
   const BlueContainer({
     Key? key,this.text='Message',

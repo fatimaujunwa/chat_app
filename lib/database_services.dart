@@ -21,6 +21,12 @@ class DatabaseServices {
       String firstname, String email, String groupName, String lastname) async {
     userCollection.doc(uid).collection('groups').add({
       "group": groupName,
+      "sendBy":"",
+      "message":"",
+      'time': DateTime.now(),
+      "groupName":groupName,
+      "groupIcon":groupName.substring(0,2).toUpperCase(),
+      "joined":true
     });
     return await userCollection.doc(uid).
     set(
@@ -31,6 +37,7 @@ class DatabaseServices {
       // "groups": [],
       "profilePic": "",
       "uid": uid,
+
     });
   }
 
@@ -74,6 +81,10 @@ class DatabaseServices {
     return  latestGroupChatCollection
         .snapshots();
   }
+
+getUserGroups(){
+   return userCollection.doc(uid).collection("groups").snapshots();
+}
 
   //latest chat
   Future latestChat(chatRoomId, chat) async {
@@ -123,7 +134,11 @@ class DatabaseServices {
     return latestChatCollection.snapshots();
   }
 
-
+updateUserGroupMessages(groupName, chatMessageData,) async {
+  DocumentReference userDocumentReference = userCollection.doc(uid);
+  await userDocumentReference.collection("groups").doc(groupName).set(
+      chatMessageData);
+}
   Future createGroup(String userName, String id, String groupName) async {
     await groupCollection.doc(groupName).collection("members").add({
       "members":userName
@@ -150,11 +165,30 @@ class DatabaseServices {
     // });
 
     DocumentReference userDocumentReference = userCollection.doc(uid);
-    return await userDocumentReference.update({
-      "groups":
-      FieldValue.arrayUnion([groupName])
+    await userDocumentReference.collection("groups").doc(groupName).set({
+      "sendBy":"",
+      "message": "",
+      'time': DateTime
+          .now(),
+      "groupName":groupName,
+      "groupIcon":groupName.substring(0,2).toUpperCase(),
+      "joined":true
     });
+
   }
+joinGroup(String groupName,String message, String sendBy)async{
+  DocumentReference userDocumentReference = userCollection.doc(uid);
+  await userDocumentReference.collection("groups").doc(groupName).set({
+    "sendBy":sendBy,
+    "message": message,
+    'time': DateTime
+        .now(),
+    "groupName":groupName,
+    "groupIcon":groupName.substring(0,2).toUpperCase(),
+    "joined":true
+  });
+}
+
   //creating group
 
 
@@ -195,7 +229,20 @@ class DatabaseServices {
       return false;
     }
   }
+Future toggle(String groupName)async{
 
+
+  DocumentReference userDocumentReference = userCollection.doc(uid).collection("groups").doc(groupName);
+  DocumentSnapshot documentSnapshot = await userDocumentReference.get();
+  List<dynamic> groups = await documentSnapshot['groupName'];
+  if(groups.contains(groupName)){
+    userDocumentReference.delete()..then((value) => print('deleted'));
+  }
+  userDocumentReference.update({
+    "joined":false
+  });
+
+}
   // toggling the group join/exit
   Future toggleGroupJoin(
       String groupId, String userName, String groupName) async {

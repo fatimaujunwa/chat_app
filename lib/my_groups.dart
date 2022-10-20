@@ -9,16 +9,15 @@ import 'app_colors.dart';
 import 'chat_screen.dart';
 import 'custom_textfield.dart';
 import 'database_services.dart';
-
-class GroupListPage extends StatefulWidget {
-   GroupListPage({Key? key,required this.uid,required this.username}) : super(key: key);
-var uid;
-final String username;
+class MyGroups extends StatefulWidget {
+ MyGroups({Key? key,required this.uid,required this.username}) : super(key: key);
+  var uid;
+  final String username;
   @override
-  State<GroupListPage> createState() => _GroupListPageState();
+  State<MyGroups> createState() => _MyGroupsState();
 }
 
-class _GroupListPageState extends State<GroupListPage> {
+class _MyGroupsState extends State<MyGroups> {
   bool haveUserSearched=false;
   bool tapped=false;
   bool joined=false;
@@ -36,42 +35,9 @@ class _GroupListPageState extends State<GroupListPage> {
 
     }
   }
-  Widget UserChats(){
-    return  StreamBuilder(
-      stream: DatabaseServices(uid: widget.uid).getUserGroups(),
-      builder: (context,AsyncSnapshot snapshot ){
-
-        return snapshot.hasData ?
-        ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (_,index){
-              return snapshot.data!.docs[index]["joined"]?  WhiteContainer(onPressed: (){
-
-              }):BlueContainer(onPressed: () async {
-                await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
-                setState(() {
-                  joined=true;
-                  haveUserSearched=false;
-                });
-              });
-
-
-
-            }):
-        Center(
-          child:
-          CircularProgressIndicator(color: AppColors.darkBlue,),
-        );
-      },
-
-
-    );
-  }
   Widget LatestChats(){
     return  StreamBuilder(
-      stream: DatabaseServices(uid: widget.uid).getGroups(),
+      stream: DatabaseServices(uid: widget.uid).getUserGroups(),
       builder: (context,AsyncSnapshot snapshot ){
 
         return snapshot.hasData ?
@@ -116,33 +82,20 @@ class _GroupListPageState extends State<GroupListPage> {
                             children: [
                               Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
                               SizedBox(height: 10.h,),
-                              snapshot.data!.docs[index]["joined"]?WhiteContainer(onPressed: ()
 
-async{
-  setState(() {
-    joined=false;
-  });
-
-  await DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]);
-
-}):
                               BlueContainer(
-                                text: 'Join',
-                                onPressed: ()async{
-                                  await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
-                                setState(() {
-                                  joined=true;
-                                  haveUserSearched=false;
-                                }
+                                text: 'Message',
+                                onPressed: (){
 
-                                );
-                                print(joined);
-                                // Navigator.push(context, MaterialPageRoute(builder: (context){
-                                //   return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
-                                // }));
+                                  setState(() {
+                                    haveUserSearched=false;
+                                  });
+                                  Navigator.push(context, MaterialPageRoute(builder: (context){
+                                    return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
+                                  }));
 
 
-                              },),
+                                },),
                             ],
                           ),
                           // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
@@ -167,8 +120,6 @@ async{
 
     );
   }
-
-
   @override
   Widget build(BuildContext context) {
     TextEditingController search=TextEditingController();
@@ -183,13 +134,13 @@ async{
             SizedBox(height: 20.h,),
             CustomTextField(
               icon:InkWell(
-                onTap: (){
-                  setState(() {
-                    tapped=false;
-                  });
-                  initiateSearch(search);
-                },
-                child: Icon(Icons.search)),
+                  onTap: (){
+                    setState(() {
+                      tapped=false;
+                    });
+                    initiateSearch(search);
+                  },
+                  child: Icon(Icons.search)),
               hintText: 'Search...',
               prefixIcon: true,
               obsText: false,
@@ -200,7 +151,7 @@ async{
               controller:  search,
             ),
             haveUserSearched?userList():
-LatestChats()
+            LatestChats()
           ],),
         ),
 
@@ -286,4 +237,6 @@ LatestChats()
       );
   }
 }
+
+
 

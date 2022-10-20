@@ -12,6 +12,7 @@ import 'custom_textfield.dart';
 import 'database_services.dart';
 import 'group_chat.dart';
 import 'groups.dart';
+import 'my_groups.dart';
 enum _SelectedTab { home, favorite, search, person }
 class HomePage extends StatefulWidget {
    HomePage({Key? key,required this.uid,required this.username}) : super(key: key);
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     TextEditingController groupName =TextEditingController();
-    List pages=[ChatScreen(uid: widget.uid, username: widget.username),GroupListPage(uid: widget.uid, username: widget.username),Test(),Test()];
+    List pages=[ChatScreen(uid: widget.uid, username: widget.username),GroupListPage(uid: widget.uid, username: widget.username), MyGroups( username: widget.username, uid: widget.uid,),Test()];
     return Scaffold(
       backgroundColor: AppColors.darkNavyBlue,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -99,7 +100,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: AppColors.darkBlue,
         onPressed: () {
           create(groupName);
-Navigator.pop(context);
+
         },
         child: Icon(Icons.add),
       ),
