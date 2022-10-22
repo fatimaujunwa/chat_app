@@ -108,10 +108,10 @@ class _GroupListPageState extends State<GroupListPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(snapshot.data!.docs[index]["groupName"],style: TextDimensions.style17RajdhaniW600White,),
-                              SizedBox(height: 10.h,),
+                              SizedBox(height: 10.0.h,),
                               Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
                             ],),
-                          SizedBox(width: 10.w,),
+                          SizedBox(width: 10.0.w,),
                           Column(
                             children: [
                               Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
