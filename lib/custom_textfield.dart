@@ -15,7 +15,7 @@ class CustomTextField extends StatefulWidget {
     required this.controller,
  required this.color,
     required this.icon,
-
+required this.validator
 
 
 
@@ -30,6 +30,7 @@ class CustomTextField extends StatefulWidget {
   final Widget icon;
 
   final TextEditingController controller;
+  final String? Function(String?)? validator;
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
@@ -45,7 +46,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
       // padding: EdgeInsets.only(top: 40.h),
       // height:40.h ,
       // width: 330.w,
-      child:   TextField(
+      child:   TextFormField(
+        validator: widget.validator,
         style: TextDimensions.style15RajdhaniW400White,
         controller: widget.controller,
         obscureText:visibility ? true : false,

@@ -11,6 +11,7 @@ import 'package:ichat/text_dimensions.dart';
 
 import 'app_colors.dart';
 import 'auth_services.dart';
+import 'custom_snack_bar.dart';
 import 'custom_textfield.dart';
 import 'home_page.dart';
 
@@ -22,21 +23,59 @@ class SignInScreen extends StatelessWidget {
     String firstNameController=firstname.text.trim();
     String groupNameController=groupName.text.trim();
     String lastNameController=lastname.text.trim();
-    AuthServices().loginUserWithEmailAndPassword(emailController,
-        passwordController, firstNameController,groupNameController,lastNameController)..then((value) async {
-          if(value==true){
-QuerySnapshot querySnapshot= await  DatabaseServices(
-    uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(emailController);
-HelperFunctions.saveUserLoggedInStatus(value);
-HelperFunctions.saveUserEmailSF(emailController);
-HelperFunctions.saveUserNameSF(querySnapshot.docs[0]['firstname']);
-print(querySnapshot.docs[0]['firstname']);
-Navigator.push(context, MaterialPageRoute(builder: (context){
-  return HomePage(uid: FirebaseAuth.instance.currentUser!.uid,username:querySnapshot.docs[0]['firstname']);
-}));
+
+    if (emailController.isEmpty && passwordController.isEmpty && firstNameController.isEmpty && lastNameController.isEmpty) {
+      showCustomSnackBar('Please type in your details', "user details");
+    }else{
+      // if (firstNameController.isEmpty) {
+      //   showCustomSnackBar('firstname field is required', 'Sign in message');
+      // }
+      // else if (lastNameController.isEmpty) {
+      //   showCustomSnackBar('lastname field is required', 'Sign in message');
+      // }
+       if (emailController.isEmpty) {
+        showCustomSnackBar('email field is required', 'Sign in message');
+      }
+      else if (passwordController.isEmpty) {
+        showCustomSnackBar('password field is required', 'Sign in message');
+      }
+      else{
+        if (password.text.length < 8) {
+          showCustomSnackBar(
+              'password length is short please input a longer password',
+              'Sign in message');
+        }
+        else{
+          AuthServices().loginUserWithEmailAndPassword(
+              emailController,
+              passwordController,
+              firstNameController,
+              groupNameController,
+              lastNameController
+
+          )..then((value) async {
+            if(value==true){
+              QuerySnapshot querySnapshot= await  DatabaseServices(
+                  uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(emailController);
+              HelperFunctions.saveUserLoggedInStatus(value);
+              HelperFunctions.saveUserEmailSF(emailController);
+              HelperFunctions.saveUserNameSF(querySnapshot.docs[0]['firstname']);
+              print(querySnapshot.docs[0]['firstname']);
+              Navigator.push(context, MaterialPageRoute(builder: (context){
+                return HomePage(uid: FirebaseAuth.instance.currentUser!.uid,username:querySnapshot.docs[0]['firstname']);
+              }));
+            }
           }
+          );
+        }
+      }
     }
-    );
+
+
+
+
+
+
 
   }
   @override
@@ -61,8 +100,18 @@ Navigator.push(context, MaterialPageRoute(builder: (context){
             SizedBox(height: 20.h,),
             Text('Email',style: TextDimensions.style15RajdhaniW400White,),
             SizedBox(height: 6.h,),
+            //RegExp(r'^[a-z-A-Z]+$')
             CustomTextField(
-              icon: Icon(Icons.person),
+              validator: (value ) {
+                if(value!.isEmpty || !RegExp(r'^[\w-\.]+@([\w-]{2,4}$').hasMatch(value)){
+                  return "Please enter correct";
+                }
+                else{
+                  return null;
+                }
+
+              },
+              icon: Icon(Icons.person,color: AppColors.whiteColor,),
               hintText: 'johndoe01@gmail.com',
               height: 52.h,
               width: 350.w,
@@ -74,7 +123,8 @@ Navigator.push(context, MaterialPageRoute(builder: (context){
             Text('Password',style: TextDimensions.style15RajdhaniW400White,),
             SizedBox(height: 6.h,),
             CustomTextField(
-              icon:Icon( Icons.lock),
+              validator: (value ) {  },
+              icon:Icon( Icons.lock,color: AppColors.whiteColor,),
               prefixIcon: true,
               hintText: '********',
               obsText: true,

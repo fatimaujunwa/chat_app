@@ -19,7 +19,7 @@ class DatabaseServices {
   //in each document add the user info
   Future updateUserData(
       String firstname, String email, String groupName, String lastname) async {
-    userCollection.doc(uid).collection('groups').add({
+    userCollection.doc(uid).collection('groups').doc(groupName).set({
       "group": groupName,
       "sendBy":"",
       "message":"",
@@ -28,6 +28,25 @@ class DatabaseServices {
       "groupIcon":groupName.substring(0,2).toUpperCase(),
       "joined":true
     });
+
+    await groupCollection.doc(groupName).collection("members").add({
+      "members":firstname
+    });
+    await groupCollection.doc(groupName).set({
+      "groupName": groupName,
+      "groupId": "",
+      "admin":firstname
+    });
+
+   await latestGroupChatCollection.doc(groupName).set({
+     "groupName":groupName,
+     "groupIcon":groupName.substring(0,2).toUpperCase(),
+     "sendBy":"",
+     "message": "",
+     'time': DateTime
+         .now()
+   }) ;
+
     return await userCollection.doc(uid).
     set(
         {
@@ -190,7 +209,12 @@ joinGroup(String groupName,String message, String sendBy)async{
 }
 
   //creating group
-
+Future test(String groupName) async {
+  DocumentReference d = userCollection.doc(uid).collection("groups").doc(groupName);
+  DocumentSnapshot documentSnapshot = await d.get();
+  print(documentSnapshot['joined']);
+  return documentSnapshot['joined'];
+}
 
   getChats(String groupId) async {
     return groupCollection
@@ -230,17 +254,19 @@ joinGroup(String groupName,String message, String sendBy)async{
     }
   }
 Future toggle(String groupName)async{
+userCollection.doc(uid).collection("groups").doc(groupName).delete()..then((value) {
+  print('deleted');
+});
 
-
-  DocumentReference userDocumentReference = userCollection.doc(uid).collection("groups").doc(groupName);
-  DocumentSnapshot documentSnapshot = await userDocumentReference.get();
-  List<dynamic> groups = await documentSnapshot['groupName'];
-  if(groups.contains(groupName)){
-    userDocumentReference.delete()..then((value) => print('deleted'));
-  }
-  userDocumentReference.update({
-    "joined":false
-  });
+  // DocumentReference userDocumentReference = userCollection.doc(uid).collection("groups").doc(groupName);
+  // DocumentSnapshot documentSnapshot = await userDocumentReference.get();
+  // List<dynamic> groups = await documentSnapshot['groupName'];
+  // if(groups.contains(groupName)){
+  //   userDocumentReference.delete()..then((value) => print('deleted'));
+  // }
+  // userDocumentReference.update({
+  //   "joined":false
+  // });
 
 }
   // toggling the group join/exit

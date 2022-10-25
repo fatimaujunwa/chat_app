@@ -163,6 +163,7 @@ chatMessages()
                   Expanded(
                       child:
                       CustomTextField(
+                        validator: (value ) {  },
                         icon: Icon(Icons.email_outlined),
                         hintText: 'Type Something...',
                         // prefixIcon: false,

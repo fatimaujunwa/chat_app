@@ -61,7 +61,8 @@ class _MyGroupsState extends State<MyGroups> {
                       width: 350.w,
 
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
 
                           CircleAvatar(radius: 50.r,
@@ -69,7 +70,7 @@ class _MyGroupsState extends State<MyGroups> {
                             child: Text(snapshot.data!.docs[index]["groupIcon"],style: TextDimensions.style17RajdhaniW600White,),
                             // backgroundImage: AssetImage('images/${images[index]}'),
                           ),
-                          // SizedBox(width: 5.w,),
+                          SizedBox(width: 30.w,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -77,25 +78,31 @@ class _MyGroupsState extends State<MyGroups> {
                               SizedBox(height: 10.h,),
                               Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
                             ],),
-                          SizedBox(width: 10.w,),
+                          Expanded(child: Container()),
                           Column(
                             children: [
                               Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
                               SizedBox(height: 10.h,),
 
                               BlueContainer(
-                                text: 'Message',
+                                text: 'Remove',
                                 onPressed: (){
-
+DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]);
                                   setState(() {
                                     haveUserSearched=false;
                                   });
-                                  Navigator.push(context, MaterialPageRoute(builder: (context){
-                                    return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
-                                  }));
+                                  // Navigator.push(context, MaterialPageRoute(builder: (context){
+                                  //   return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
+                                  // }
+                                  //
+                                  //
+                                  // )
+                                  //
+                                  // );
 
 
                                 },),
+
                             ],
                           ),
                           // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
@@ -125,36 +132,45 @@ class _MyGroupsState extends State<MyGroups> {
     TextEditingController search=TextEditingController();
     List <String> letters=["H","C","A","S","SM","G","F","K"];
     return
-      Container(
-        margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
-        // color: AppColors.darkNavyBlue,
-        child: SingleChildScrollView(
-          child: Column(children: [
-            Text('Support Groups',style: TextDimensions.style36RajdhaniW700White,),
-            SizedBox(height: 20.h,),
-            CustomTextField(
-              icon:InkWell(
-                  onTap: (){
-                    setState(() {
-                      tapped=false;
-                    });
-                    initiateSearch(search);
-                  },
-                  child: Icon(Icons.search)),
-              hintText: 'Search...',
-              prefixIcon: true,
-              obsText: false,
-              suffixIcon: false,
-              height: 80.h,
-              width: 350.w,
-              color: AppColors.middleShadeNavyBlue,
-              controller:  search,
-            ),
-            haveUserSearched?userList():
-            LatestChats()
+      Scaffold(
+        backgroundColor: AppColors.darkNavyBlue,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+            Container(
+                margin: EdgeInsets.only(top: 50.h,left: 20.w,),
+
+                child: Text('My Groups',style: TextDimensions.style36RajdhaniW700White,)),
+            Container(
+              margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
+              child: Column(children: [
+              SizedBox(height: 20.h,),
+              CustomTextField(
+                validator: (value ) {  },
+                icon:InkWell(
+                    onTap: (){
+                      setState(() {
+                        tapped=false;
+                      });
+                      initiateSearch(search);
+                    },
+                    child: Icon(Icons.search)),
+                hintText: 'Search...',
+                prefixIcon: true,
+                obsText: false,
+                suffixIcon: false,
+                height: 80.h,
+                width: 350.w,
+                color: AppColors.middleShadeNavyBlue,
+                controller:  search,
+              ),
+              haveUserSearched?userList():
+              LatestChats()
+            ],),)
+
           ],),
         ),
-
       );
   }
   Widget userList(){

@@ -10,6 +10,7 @@ import 'package:ichat/sign_in_screen.dart';
 import 'package:ichat/text_dimensions.dart';
 
 import 'auth_services.dart';
+import 'custom_snack_bar.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -19,16 +20,59 @@ void register(BuildContext context,TextEditingController email,TextEditingContro
   String firstNameController=firstname.text.trim();
   String groupNameController=groupName.text.trim();
   String lastNameController=lastname.text.trim();
-  AuthServices().registerUserWithEmailAndPassword(emailController, passwordController, firstNameController,groupNameController,lastNameController)..then((value) {
-    if(value==true){
-      HelperFunctions.saveUserLoggedInStatus(value);
-      HelperFunctions.saveUserEmailSF(emailController);
-      HelperFunctions.saveUserNameSF(firstNameController);
-      Navigator.push(context, MaterialPageRoute(builder: (context){
-        return SignInScreen();
-      }));
+  if (emailController.isEmpty && passwordController.isEmpty && firstNameController.isEmpty && lastNameController.isEmpty) {
+    showCustomSnackBar('Please type in your details', "user details");
+  }
+  else{
+    if (firstNameController.isEmpty) {
+      showCustomSnackBar('firstname field is required', 'Sign in message');
     }
-  });
+    else if (lastNameController.isEmpty) {
+      showCustomSnackBar('lastname field is required', 'Sign in message');
+    }
+    else if (emailController.isEmpty) {
+      showCustomSnackBar('email field is required', 'Sign in message');
+    }
+    else if (passwordController.isEmpty) {
+      showCustomSnackBar('password field is required', 'Sign in message');
+    }
+
+    else{
+      if (password.text.length < 8) {
+        showCustomSnackBar(
+            'password length is short please input a longer password',
+            'Sign in message');
+      }
+      else{
+        AuthServices().registerUserWithEmailAndPassword(emailController, passwordController, firstNameController,groupNameController,lastNameController)..then((value) {
+          if(value==true){
+            HelperFunctions.saveUserLoggedInStatus(value);
+            HelperFunctions.saveUserEmailSF(emailController);
+            HelperFunctions.saveUserNameSF(firstNameController);
+            Navigator.push(context, MaterialPageRoute(builder: (context){
+              return SignInScreen();
+            }));
+          }
+
+
+        });
+      }
+
+
+
+    }
+
+
+
+
+
+  }
+
+
+
+
+
+
 
 }
   @override
@@ -52,38 +96,40 @@ SizedBox(height: 53.h,),
          Text('First name',style: TextDimensions.style15RajdhaniW400White,),
          SizedBox(height: 6.h,),
          CustomTextField(
-           icon: Icon(Icons.person),
+           icon: Icon(Icons.person,color:AppColors.whiteColor),
            hintText: 'John',
            height: 52.h,
            width: 350.w,
            prefixIcon: true,
            color: AppColors.middleShadeNavyBlue,
-           controller:  firstName,
+           controller:  firstName, validator: (value ) {  },
          ),
 
          SizedBox(height: 20.h,),
          Text('Last name',style: TextDimensions.style15RajdhaniW400White,),
          SizedBox(height: 6.h,),
          CustomTextField(
-           icon: Icon(Icons.person),
+           icon: Icon(Icons.person,color: AppColors.whiteColor,),
            hintText: 'Doe',
            height: 52.h,
            width: 350.w,
            prefixIcon: true,
            controller:  lastName,
-           color: AppColors.middleShadeNavyBlue,
+           color: AppColors.middleShadeNavyBlue, validator: (value ) {  },
          ),
          SizedBox(height: 20.h,),
          Text('Email',style: TextDimensions.style15RajdhaniW400White,),
          SizedBox(height: 6.h,),
          CustomTextField(
-           icon: Icon(Icons.alternate_email),
+           icon: Icon(Icons.alternate_email,color:AppColors.whiteColor),
            hintText: 'johndoe01@gmail.com',
            height: 52.h,
            prefixIcon: true,
            width: 350.w,
            color: AppColors.middleShadeNavyBlue,
            controller:  email,
+
+           validator: (value ) {  },
          ),
          SizedBox(height: 20.h,),
          // Text('Support Group',style: TextDimensions.style15RajdhaniW400White,),
@@ -93,7 +139,7 @@ SizedBox(height: 53.h,),
          Text('Password',style: TextDimensions.style15RajdhaniW400White,),
          SizedBox(height: 6.h,),
          CustomTextField(
-           icon: Icon(Icons.lock),
+           icon: Icon(Icons.lock,color: AppColors.whiteColor,),
            hintText: '********',
            obsText: true,
            suffixIcon: true,
@@ -101,7 +147,7 @@ SizedBox(height: 53.h,),
            height: 52.h,
            width: 350.w,
            color: AppColors.middleShadeNavyBlue,
-           controller:  password,
+           controller:  password, validator: (value ) {  },
          ),
          SizedBox(height: 10.h,),
          Row(

@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage> {
             Text('Create Group',style: TextDimensions.style36RajdhaniW700White,),
             SizedBox(height: 20.h,),
             CustomTextField(
+              validator: (value ) {  },
               icon: InkWell(
                 onTap: (){
                   setState(() {

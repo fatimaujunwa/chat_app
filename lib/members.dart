@@ -106,6 +106,7 @@ class _MembersListState extends State<MembersList> {
           child: Column(children: [
             SizedBox(height: 20.h,),
             CustomTextField(
+              validator: (value ) {  },
               icon: Icon(Icons.search),
               hintText: 'Search...',
               prefixIcon: true,

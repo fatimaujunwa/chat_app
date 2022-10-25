@@ -29,11 +29,15 @@ class _ChatScreenState extends State<ChatScreen> {
   bool haveUserSearched = false;
   bool tapped=false;
   var sender='';
+
   QuerySnapshot? searchResultSnapshot;
   QuerySnapshot? searchLatestSnapshot;
   initiateSearch(TextEditingController searchEditingController) async {
     if(searchEditingController.text.isNotEmpty){
       await DatabaseServices(uid: widget.uid).searchUser(searchEditingController.text).then((value) {
+        if(value==null){
+          print('user does not exist');
+        }
         searchResultSnapshot = value;
         print("$searchResultSnapshot");
         setState(() {
@@ -130,7 +134,12 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       builder: (context,AsyncSnapshot<QuerySnapshot> snapshot ){
 
-        return snapshot.hasData ?
+        return
+
+
+       snapshot.hasData &&   snapshot.data!.docs.length>0  ?
+
+
         ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
@@ -148,14 +157,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: GestureDetector(
                         onTap: ()=> sendMessage(snapshot.data!.docs[index]["sendTo"]),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
 
                             CircleAvatar(radius: 50.r,
                               backgroundColor: AppColors.darkNavyBlue,
                               backgroundImage: AssetImage('images/image1.jpg'),
                             ),
-                            // SizedBox(width: 5.w,),
+                            SizedBox(width: 10.w,),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -163,7 +172,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 SizedBox(height: 10.h,),
                                 Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
                               ],),
-                            SizedBox(width: 10.w,),
+                           Expanded(child: Container()),
                             Column(
                               children: [
                                 Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
@@ -180,8 +189,22 @@ class _ChatScreenState extends State<ChatScreen> {
                     Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
                   ],
                 );
-            }):Center(
-              child: CircularProgressIndicator(color: AppColors.darkBlue,),
+            }):
+
+
+
+        Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 100.h),
+                height: 200,
+                width: 200,
+
+
+                decoration: BoxDecoration(
+                  // color: Colors.red,
+                  image: DecorationImage(image: AssetImage('images/message.jpg'))
+
+              ),),
             );
       },
 
@@ -199,7 +222,10 @@ class _ChatScreenState extends State<ChatScreen> {
     DatabaseServices(uid: widget.uid).searchLatestChats(sender
     );
 
+
+
   }
+
 
 
   @override
@@ -209,6 +235,7 @@ class _ChatScreenState extends State<ChatScreen> {
       'image5.jpg','image6.jpg','image7.jpg','image8.jpg','image9.jpg'
 
     ];
+
 
     int currIndex=0;
     TextEditingController search =TextEditingController();
@@ -224,6 +251,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Text('Chats',style: TextDimensions.style36RajdhaniW700White,),
             SizedBox(height: 20.h,),
             CustomTextField(
+              validator: (value ) {  },
               icon:
               InkWell(
                 onTap: (){
@@ -246,7 +274,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
             haveUserSearched?userList():
 // chatMessages()
-            LatestChats()
+            LatestChats(),
+
           ],
         ),
 

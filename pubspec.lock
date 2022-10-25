@@ -148,6 +148,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.2"
+  flat_icons_flutter:
+    dependency: "direct main"
+    description:
+      name: flat_icons_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   floating_bottom_navigation_bar:
     dependency: "direct main"
     description:

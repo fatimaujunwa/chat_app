@@ -59,6 +59,7 @@ class Test extends StatelessWidget {
       body: Container(
         child: Center(child:
         CustomTextField(
+          validator: (value ) {  },
           icon: Icon(Icons.lock),
           hintText: 'DD-MM-YY',
           height: 52.h,

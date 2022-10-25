@@ -45,6 +45,8 @@ dependencies:
   dropdown_button2:
   floating_bottom_navigation_bar:
   dot_navigation_bar:
+  flat_icons_flutter:
+
 
 
 dev_dependencies:

@@ -18,6 +18,8 @@ final String username;
   State<GroupListPage> createState() => _GroupListPageState();
 }
 
+
+
 class _GroupListPageState extends State<GroupListPage> {
   bool haveUserSearched=false;
   bool tapped=false;
@@ -80,6 +82,7 @@ class _GroupListPageState extends State<GroupListPage> {
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (_,index){
+                  (){}();
               return  Column(
 
                 children: [
@@ -116,27 +119,22 @@ class _GroupListPageState extends State<GroupListPage> {
                             children: [
                               Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
                               SizedBox(height: 10.h,),
-                              snapshot.data!.docs[index]["joined"]?WhiteContainer(onPressed: ()
 
-async{
-  setState(() {
-    joined=false;
-  });
 
-  await DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]);
 
-}):
                               BlueContainer(
-                                text: 'Join',
+                                text: 'Message',
                                 onPressed: ()async{
-                                  await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
+
+
+                                  // await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
                                 setState(() {
-                                  joined=true;
+                                  // joined=true;
                                   haveUserSearched=false;
                                 }
 
                                 );
-                                print(joined);
+
                                 // Navigator.push(context, MaterialPageRoute(builder: (context){
                                 //   return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
                                 // }));
@@ -168,42 +166,175 @@ async{
     );
   }
 
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    Widget LatestChats(){
+      return  StreamBuilder(
+        stream: DatabaseServices(uid: widget.uid).getGroups(),
+        builder: (context,AsyncSnapshot snapshot ){
+
+          return snapshot.hasData ?
+          ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (_,index){
+                    (){}();
+                return  Column(
+
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context){
+                          return GroupChatRoom(admin: snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
+                        }));
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
+                        height: 80.h ,
+                        width: 350.w,
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+
+                            CircleAvatar(radius: 50.r,
+                              backgroundColor: AppColors.middleShadeNavyBlue,
+                              child: Text(snapshot.data!.docs[index]["groupIcon"],style: TextDimensions.style17RajdhaniW600White,),
+                              // backgroundImage: AssetImage('images/${images[index]}'),
+                            ),
+
+                            SizedBox(width: 30.w,),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    margin: EdgeInsets.only(top: 13.h),
+                                    child: Text(snapshot.data!.docs[index]["groupName"] ,style: TextDimensions.style17RajdhaniW600White,)),
+
+
+
+                                SizedBox(height: 10.0.h,),
+                                Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
+                              ],),
+                            Expanded(child: Container()),
+                            Column(
+                              children: [
+                                Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
+                                SizedBox(height: 10.h,),
+
+
+
+                                BlueContainer(
+                                  text: 'Add To List',
+                                  onPressed: ()async{
+                                    Map<String,dynamic>userGroupChat=      {
+                                      "sendBy":widget.uid,
+                                      "message":"",
+                                      'time': DateTime
+                                          .now(),
+                                      "groupName":snapshot.data!.docs[index]["groupName"],
+                                      "groupIcon":snapshot.data!.docs[index]["groupName"].substring(0,2).toUpperCase()
+                                    };
+
+
+                                    DatabaseServices(uid: widget.uid).updateUserGroupMessages(snapshot.data!.docs[index]["groupName"],userGroupChat);
+
+                                    // await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
+                                    setState(() {
+                                      // joined=true;
+                                      haveUserSearched=false;
+                                    }
+
+                                    );
+
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context){
+                                    //   return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
+                                    // }));
+
+
+                                  },),
+                              ],
+                            ),
+                            // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
+
+
+                          ],),
+                      ),
+                    ),
+                    Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
+                  ],
+                );
+
+
+
+              }):
+          Center(
+            child:
+            CircularProgressIndicator(color: AppColors.darkBlue,),
+          );
+        },
+
+
+      );
+    }
     TextEditingController search=TextEditingController();
     List <String> letters=["H","C","A","S","SM","G","F","K"];
+
     return
-      Container(
-        margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
-        // color: AppColors.darkNavyBlue,
-        child: SingleChildScrollView(
-          child: Column(children: [
-            Text('Support Groups',style: TextDimensions.style36RajdhaniW700White,),
-            SizedBox(height: 20.h,),
-            CustomTextField(
-              icon:InkWell(
-                onTap: (){
-                  setState(() {
-                    tapped=false;
-                  });
-                  initiateSearch(search);
-                },
-                child: Icon(Icons.search)),
-              hintText: 'Search...',
-              prefixIcon: true,
-              obsText: false,
-              suffixIcon: false,
-              height: 80.h,
-              width: 350.w,
-              color: AppColors.middleShadeNavyBlue,
-              controller:  search,
-            ),
-            haveUserSearched?userList():
-LatestChats()
+      Scaffold(
+        backgroundColor: AppColors.darkNavyBlue,
+        body: SingleChildScrollView(
+          child: Column(
+
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+            Container(
+
+                margin: EdgeInsets.only(top: 50.h,left: 20.w,),
+                child: Text('Support Groups',style: TextDimensions.style36RajdhaniW700White,)),
+            Container(
+              margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
+              child: Column(
+
+              children: [
+                SizedBox(height: 20.h,),
+                CustomTextField(
+                  validator: (value ) {  },
+                  icon:InkWell(
+                      onTap: (){
+                        setState(() {
+                          tapped=false;
+                        });
+                        initiateSearch(search);
+                      },
+                      child: Icon(Icons.search,color: AppColors.whiteColor,)),
+                  hintText: 'Search...',
+                  prefixIcon: true,
+                  obsText: false,
+                  suffixIcon: false,
+                  height: 80.h,
+                  width: 350.w,
+                  color: AppColors.middleShadeNavyBlue,
+                  controller:  search,
+                ),
+                haveUserSearched?userList():
+                LatestChats()
+
+              ],
+            ),)
+
+
           ],),
         ),
-
       );
   }
   Widget userList(){
