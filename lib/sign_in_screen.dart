@@ -60,7 +60,7 @@ class SignInScreen extends StatelessWidget {
               HelperFunctions.saveUserLoggedInStatus(value);
               HelperFunctions.saveUserEmailSF(emailController);
               HelperFunctions.saveUserNameSF(querySnapshot.docs[0]['firstname']);
-              print(querySnapshot.docs[0]['firstname']);
+              print(querySnapshot.docs.length);
               Navigator.push(context, MaterialPageRoute(builder: (context){
                 return HomePage(uid: FirebaseAuth.instance.currentUser!.uid,username:querySnapshot.docs[0]['firstname']);
               }));
