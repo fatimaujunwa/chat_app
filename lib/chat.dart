@@ -65,6 +65,7 @@ print('chats'+sender.toString());
           'time': DateTime
               .now()
               .millisecondsSinceEpoch,
+          "count":1
         };
 DatabaseServices(uid:widget.uid).addMessage(widget.chatRoomId, chatMessageMap);
 

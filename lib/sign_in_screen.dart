@@ -15,17 +15,28 @@ import 'custom_snack_bar.dart';
 import 'custom_textfield.dart';
 import 'home_page.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
-  void login(BuildContext context,TextEditingController email,TextEditingController password, TextEditingController firstname,TextEditingController groupName,TextEditingController lastname)async{
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool loaded=false;
+
+  void login(BuildContext context,TextEditingController email,TextEditingController password, )async{
     String emailController=email.text.trim();
     String passwordController=password.text.trim();
-    String firstNameController=firstname.text.trim();
-    String groupNameController=groupName.text.trim();
-    String lastNameController=lastname.text.trim();
 
-    if (emailController.isEmpty && passwordController.isEmpty && firstNameController.isEmpty && lastNameController.isEmpty) {
-      showCustomSnackBar('Please type in your details', "user details");
+    print(emailController);
+    print(passwordController);
+
+    if (emailController.isEmpty && passwordController.isEmpty ) {
+      print('empty');
+      CustomSnackBar().showCustomSnackBar('Please type in your details', context);
+
     }else{
       // if (firstNameController.isEmpty) {
       //   showCustomSnackBar('firstname field is required', 'Sign in message');
@@ -34,26 +45,34 @@ class SignInScreen extends StatelessWidget {
       //   showCustomSnackBar('lastname field is required', 'Sign in message');
       // }
        if (emailController.isEmpty) {
-        showCustomSnackBar('email field is required', 'Sign in message');
+         CustomSnackBar().showCustomSnackBar('email field is required', context);
+
       }
       else if (passwordController.isEmpty) {
-        showCustomSnackBar('password field is required', 'Sign in message');
+         CustomSnackBar().showCustomSnackBar('password field is required', context);
+
       }
       else{
         if (password.text.length < 8) {
-          showCustomSnackBar(
-              'password length is short please input a longer password',
-              'Sign in message');
+          CustomSnackBar().showCustomSnackBar('password length is short please input a longer password', context);
+
         }
         else{
+          print('done');
+          setState(() {
+            loaded=true;
+          });
           AuthServices().loginUserWithEmailAndPassword(
               emailController,
               passwordController,
-              firstNameController,
-              groupNameController,
-              lastNameController
+
+
+
 
           )..then((value) async {
+            setState(() {
+              loaded=false;
+            });
             if(value==true){
               QuerySnapshot querySnapshot= await  DatabaseServices(
                   uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(emailController);
@@ -78,14 +97,15 @@ class SignInScreen extends StatelessWidget {
 
 
   }
+
+
   @override
   Widget build(BuildContext context) {
     TextEditingController email=TextEditingController();
     TextEditingController password=TextEditingController();
-    TextEditingController firstname=TextEditingController();
-    TextEditingController groupName=TextEditingController();
-    TextEditingController lastName=TextEditingController();
+
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppColors.darkNavyBlue,
       body: Container(
         margin: EdgeInsets.only(left: 23.w,right: 23.w),
@@ -144,8 +164,10 @@ class SignInScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 30.h,),
-            GestureDetector(
-              onTap: ()=>login(context, email, password, firstname, groupName, lastName),
+         loaded?
+
+         Center(child: CircularProgressIndicator(color: AppColors.darkBlue,)):   GestureDetector(
+              onTap: ()=>login(context, email, password, ),
               child: Container(height: 52.h,
                 width: 350.w,
                 color:AppColors.darkBlue,

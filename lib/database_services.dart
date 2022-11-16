@@ -77,6 +77,7 @@ class DatabaseServices {
   Future<QuerySnapshot> searchGroup(String searchField) async {
     QuerySnapshot snapshot =
     await latestGroupChatCollection.where("groupName", isEqualTo: searchField).get();
+
     return snapshot;
   }
 
@@ -95,6 +96,8 @@ class DatabaseServices {
         .snapshots();
     return snapshot;
   }
+
+
 
   getGroups() {
     return  latestGroupChatCollection
@@ -152,7 +155,10 @@ getUserGroups(){
   getLatestChats() {
     return latestChatCollection.snapshots();
   }
-
+  addGroupToUser(searchField){
+    searchLatestChats(searchField);
+  }
+//change
 updateUserGroupMessages(groupName, chatMessageData,) async {
   DocumentReference userDocumentReference = userCollection.doc(uid);
   await userDocumentReference.collection("groups").doc(groupName).set(

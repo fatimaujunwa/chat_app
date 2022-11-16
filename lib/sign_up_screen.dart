@@ -12,8 +12,16 @@ import 'package:ichat/text_dimensions.dart';
 import 'auth_services.dart';
 import 'custom_snack_bar.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+
+  bool loaded=false;
 void register(BuildContext context,TextEditingController email,TextEditingController password, TextEditingController lastname,TextEditingController groupName,TextEditingController firstname,)async{
   String emailController=email.text.trim();
   String passwordController=password.text.trim();
@@ -21,30 +29,39 @@ void register(BuildContext context,TextEditingController email,TextEditingContro
   String groupNameController=groupName.text.trim();
   String lastNameController=lastname.text.trim();
   if (emailController.isEmpty && passwordController.isEmpty && firstNameController.isEmpty && lastNameController.isEmpty) {
-    showCustomSnackBar('Please type in your details', "user details");
+    CustomSnackBar().showCustomSnackBar('Please type in your details', context);
+
   }
   else{
     if (firstNameController.isEmpty) {
-      showCustomSnackBar('firstname field is required', 'Sign in message');
+      CustomSnackBar().showCustomSnackBar('firstname field is required', context);
+
     }
     else if (lastNameController.isEmpty) {
-      showCustomSnackBar('lastname field is required', 'Sign in message');
+
+
     }
     else if (emailController.isEmpty) {
-      showCustomSnackBar('email field is required', 'Sign in message');
+      CustomSnackBar().showCustomSnackBar('email field is required', context);
     }
     else if (passwordController.isEmpty) {
-      showCustomSnackBar('password field is required', 'Sign in message');
+      CustomSnackBar().showCustomSnackBar('password field is required', context);
     }
 
     else{
       if (password.text.length < 8) {
-        showCustomSnackBar(
-            'password length is short please input a longer password',
-            'Sign in message');
+        CustomSnackBar().showCustomSnackBar('password length is short please input a longer password', context);
+
       }
       else{
+        setState(() {
+          loaded=true;
+        });
         AuthServices().registerUserWithEmailAndPassword(emailController, passwordController, firstNameController,groupNameController,lastNameController)..then((value) {
+
+         setState(() {
+           loaded=false;
+         });
           if(value==true){
             HelperFunctions.saveUserLoggedInStatus(value);
             HelperFunctions.saveUserEmailSF(emailController);
@@ -75,6 +92,7 @@ void register(BuildContext context,TextEditingController email,TextEditingContro
 
 
 }
+
   @override
   Widget build(BuildContext context) {
   TextEditingController email=TextEditingController();
@@ -165,7 +183,7 @@ SizedBox(height: 53.h,),
            ],
          ),
          SizedBox(height: 30.h,),
-         GestureDetector(
+       loaded?CircularProgressIndicator(color: AppColors.darkBlue,):  GestureDetector(
            onTap: (){
              register(context, email, password, lastName, supportGroupController, firstName);
            },

@@ -26,6 +26,11 @@ class _GroupListPageState extends State<GroupListPage> {
   bool joined=false;
   QuerySnapshot? searchResultSnapshot;
   QuerySnapshot? searchLatestSnapshot;
+
+  // addToUserGroupList(searchField) async {
+  //
+  // }
+
   initiateSearch(TextEditingController searchEditingController) async {
     if(searchEditingController.text.isNotEmpty){
       await DatabaseServices(uid: widget.uid).searchGroup(searchEditingController.text).then((value) {
@@ -236,17 +241,21 @@ class _GroupListPageState extends State<GroupListPage> {
                                 BlueContainer(
                                   text: 'Add To List',
                                   onPressed: ()async{
-                                    Map<String,dynamic>userGroupChat=      {
-                                      "sendBy":widget.uid,
-                                      "message":"",
-                                      'time': DateTime
-                                          .now(),
-                                      "groupName":snapshot.data!.docs[index]["groupName"],
-                                      "groupIcon":snapshot.data!.docs[index]["groupName"].substring(0,2).toUpperCase()
-                                    };
+                                    await DatabaseServices(uid: widget.uid).searchGroup(snapshot.data!.docs[index]["groupName"]).then((value){
+                                      Map<String,dynamic>userGroupChat=      {
+                                        "sendBy":value.docs[0]['sendBy'],
+                                        "message":value.docs[0]['message'],
+                                        'time': value.docs[0]['time'],
+                                        "groupName":value.docs[0]['groupName'],
+                                        "groupIcon":value.docs[0]['groupIcon']
+                                      };
+                                      DatabaseServices(uid: widget.uid).updateUserGroupMessages(snapshot.data!.docs[index]["groupName"],userGroupChat);
+
+                                    });
 
 
-                                    DatabaseServices(uid: widget.uid).updateUserGroupMessages(snapshot.data!.docs[index]["groupName"],userGroupChat);
+
+
 
                                     // await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
                                     setState(() {

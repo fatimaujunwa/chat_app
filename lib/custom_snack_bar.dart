@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:ichat/app_colors.dart';
 
-void showCustomSnackBar(String message, String title) {
-  SnackBar(content: Text(message),
+class CustomSnackBar{
+  void showCustomSnackBar(String text, BuildContext context){
+    var snackBar = SnackBar(content: Text(text),backgroundColor: AppColors.middleShadeNavyBlue,);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+}
 
 
-  );
-  // Get.snackbar(
+// Get.snackbar(
   //
   //     title,
   //     message,
@@ -15,4 +19,3 @@ void showCustomSnackBar(String message, String title) {
   //       message,
   //     ),
   //     duration: Duration(seconds: 2));
-}

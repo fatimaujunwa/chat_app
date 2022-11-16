@@ -12,6 +12,7 @@ import 'package:ichat/group_chat.dart';
 import 'package:ichat/groups.dart';
 import 'package:ichat/test.dart';
 import 'package:ichat/text_dimensions.dart';
+import 'package:intl/intl.dart';
 
 import 'chat.dart';
 import 'database_services.dart';
@@ -29,20 +30,33 @@ class _ChatScreenState extends State<ChatScreen> {
   bool haveUserSearched = false;
   bool tapped=false;
   var sender='';
+  bool error=true;
 
   QuerySnapshot? searchResultSnapshot;
   QuerySnapshot? searchLatestSnapshot;
   initiateSearch(TextEditingController searchEditingController) async {
     if(searchEditingController.text.isNotEmpty){
       await DatabaseServices(uid: widget.uid).searchUser(searchEditingController.text).then((value) {
-        if(value==null){
+        if(value.docs.isEmpty){
           print('user does not exist');
+          setState(() {
+            error=true;
+          });
+          setState(() {
+            haveUserSearched=true;
+          });
+        }
+        else{
+          setState(() {
+            haveUserSearched=true;
+          });
+          setState(() {
+            error=false;
+          });
         }
         searchResultSnapshot = value;
-        print("$searchResultSnapshot");
-        setState(() {
-          haveUserSearched=true;
-        });
+;
+
       });
 
     }
@@ -68,10 +82,37 @@ class _ChatScreenState extends State<ChatScreen> {
      return GroupChatRoom(admin:userName,groupName:groupName,uid:widget.uid);
    }));
   }
+//haveUserSearched ==true && error==false?
 
+//                 :
+//
+//             Container(height: 100,width: 100,color: Colors.blue,)
+Widget test(){
+  print('searched $haveUserSearched');
+  print('error $error');
+    if(haveUserSearched&& error){
+     return LatestChats();
 
-  
+    }
+     if(haveUserSearched==true && error==false){
+     return userList();
+    }
+    else{
+    return  LatestChats();
+    }
+}
 
+Widget dateTimeConversion(DateTime time){
+  final DateTime now = time;
+  // DateTime parseDate = DateFormat("yyyy-MM-dd HH:mm:ss")
+  //     .parse(now);
+  // var inputData = DateTime.parse(parseDate.toString());
+  final DateFormat formatter =  DateFormat.yMMMMd('en_US');
+  final String formatted = formatter.format(now);
+  print(formatted);
+return  Text(formatted,style: TextDimensions.style12RajdhaniW600White,);
+
+}
 
   chatMessages()  {
     return StreamBuilder(
@@ -151,7 +192,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     Container(
                       padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-                      height: 80.h ,
+                      height: 60.h ,
                       width: 350.w,
 
                       child: GestureDetector(
@@ -160,7 +201,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
 
-                            CircleAvatar(radius: 50.r,
+                            CircleAvatar(radius: 30.r,
                               backgroundColor: AppColors.darkNavyBlue,
                               backgroundImage: AssetImage('images/image1.jpg'),
                             ),
@@ -173,9 +214,14 @@ class _ChatScreenState extends State<ChatScreen> {
                                 Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
                               ],),
                            Expanded(child: Container()),
+
                             Column(
+
                               children: [
-                                Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
+
+dateTimeConversion(
+ (snapshot.data!.docs[index]['time'] as Timestamp).toDate()
+    ),
                                 SizedBox(height: 10.h,),
                                 CircleAvatar(radius: 10,backgroundColor: AppColors.darkBlue,child: Text('5'),),
                               ],
@@ -193,19 +239,22 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
 
-        Center(
-              child: Container(
-                margin: EdgeInsets.only(top: 100.h),
-                height: 200,
-                width: 200,
+       Container(
+  margin: EdgeInsets.only(top: 100.h),
+  height: 200,
+  width: 200,
+  alignment: Alignment.center,
+  child: Icon(Icons.email,size: 250,color: AppColors.darkBlue,),
 
+  //   decoration: BoxDecoration(
+  //     color: Colors.red,
+  //     // image: DecorationImage(image: AssetImage('images/message.jpg')
+  //     // )
+  //
+  //
+  // ),
+       );
 
-                decoration: BoxDecoration(
-                  // color: Colors.red,
-                  image: DecorationImage(image: AssetImage('images/message.jpg'))
-
-              ),),
-            );
       },
 
 
@@ -265,16 +314,22 @@ class _ChatScreenState extends State<ChatScreen> {
               prefixIcon: true,
               obsText: false,
               suffixIcon: false,
-              height: 80.h,
+              height: 50.h,
               width: 350.w,
               color: AppColors.middleShadeNavyBlue,
               controller:  search,
             ),
-            SizedBox(height: 8.h,),
-
-            haveUserSearched?userList():
-// chatMessages()
-            LatestChats(),
+            // SizedBox(height: 8.h,),
+test()
+            // haveUserSearched ==true && error==false?
+            // Container(height: 100,width: 100,color: Colors.red,)
+            //     :
+            //
+            // Container(height: 100,width: 100,color: Colors.blue,)
+//             userList():
+// // chatMessages()
+//
+//             LatestChats(),
 
           ],
         ),
