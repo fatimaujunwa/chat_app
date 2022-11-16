@@ -7,6 +7,7 @@ import 'package:ichat/chat_screen.dart';
 import 'package:ichat/database_services.dart';
 import 'package:ichat/helper_functions.dart';
 import 'package:ichat/search_screen.dart';
+import 'package:ichat/sign_up_screen.dart';
 import 'package:ichat/text_dimensions.dart';
 
 import 'app_colors.dart';
@@ -158,7 +159,12 @@ class _SignInScreenState extends State<SignInScreen> {
             Row(
               children: [
                 Text('Dont\'t have an account? ',style: TextDimensions.style12RajdhaniW600White,),
-                Text('Sign up',style: TextDimensions.style12RajdhaniW600BlueUnderline,),
+                GestureDetector(
+                    onTap:()=> Navigator.push(context, MaterialPageRoute(builder: (context){
+                      return  SignUpScreen();
+                    })),
+
+                    child: Container(child: Text('Sign up',style: TextDimensions.style12RajdhaniW600BlueUnderline,))),
 
 
               ],
