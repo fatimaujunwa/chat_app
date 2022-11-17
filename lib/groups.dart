@@ -204,20 +204,20 @@ class _GroupListPageState extends State<GroupListPage> {
                       },
                       child: Container(
                         padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-                        height: 80.h ,
+                        height: 76.h ,
                         width: 350.w,
 
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
 
-                            CircleAvatar(radius: 50.r,
+                            CircleAvatar(radius: 30.r,
                               backgroundColor: AppColors.middleShadeNavyBlue,
                               child: Text(snapshot.data!.docs[index]["groupIcon"],style: TextDimensions.style17RajdhaniW600White,),
                               // backgroundImage: AssetImage('images/${images[index]}'),
                             ),
 
-                            SizedBox(width: 30.w,),
+                            SizedBox(width: 20.w,),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -330,7 +330,7 @@ class _GroupListPageState extends State<GroupListPage> {
                   prefixIcon: true,
                   obsText: false,
                   suffixIcon: false,
-                  height: 80.h,
+                  height: 50.h,
                   width: 350.w,
                   color: AppColors.middleShadeNavyBlue,
                   controller:  search,

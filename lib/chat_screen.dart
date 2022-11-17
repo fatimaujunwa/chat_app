@@ -309,7 +309,7 @@ dateTimeConversion(
                   });
                   initiateSearch(search);
                 },
-                child: Icon(Icons.search),),
+                child: Icon(Icons.search,color: Colors.white,),),
               hintText: 'Search..',
               prefixIcon: true,
               obsText: false,
@@ -353,8 +353,8 @@ test()
             searchResultSnapshot!.docs[index]["email"],
           );
         }) :  Container(
-      height: 100,
-      width: 100,
+      height: 100.h,
+      width: 100.w,
       color: Colors.blue,
 
     );
@@ -368,20 +368,21 @@ test()
             haveUserSearched=false;
           });
         },
-        child: Container(
+        child:
+        Container(
           padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-          height: 80.h ,
+          height: 60.h ,
           width: 350.w,
 
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
 
-              CircleAvatar(radius: 50.r,
+              CircleAvatar(radius: 30.r,
                 backgroundColor: AppColors.middleShadeNavyBlue,
                 // backgroundImage: AssetImage('images/${images[index]}'),
               ),
-              // SizedBox(width: 5.w,),
+              SizedBox(width: 10.w,),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -389,7 +390,7 @@ test()
                   SizedBox(height: 10.h,),
                   Text(userEmail,style: TextDimensions.style12RajdhaniW600White,)
                 ],),
-              SizedBox(width: 10.w,),
+            Expanded(child: Container()),
               Column(
                 children: [
                   Text(''),
@@ -491,7 +492,7 @@ class _BlueContainerState extends State<BlueContainer> {
 
       widget.onPressed,
 
-      child: Container(height: 35.h,width: 80.w,
+      child: Container(height: 30.h,width: 80.w,
         decoration: BoxDecoration(
             color: AppColors.darkBlue,
             borderRadius: BorderRadius.circular(6.r)

@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 
 
           ),
-          home: SignUpScreen()
+          home: GroupListPage(uid: null, username: '',)
       );
 
     },
