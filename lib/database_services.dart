@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class DatabaseServices {
   final String? uid;
@@ -80,6 +82,14 @@ class DatabaseServices {
 
     return snapshot;
   }
+  Future<QuerySnapshot> searchMyGroup(String searchField) async {
+    QuerySnapshot snapshot =
+    await userCollection.doc(uid).collection("groups").where("groupName", isEqualTo: searchField).get();
+
+    return snapshot;
+  }
+
+
 
   //search latest chat
 
@@ -174,20 +184,7 @@ updateUserGroupMessages(groupName, chatMessageData,) async {
       "admin":userName
     });
 
-    // DocumentReference groupDocumentReference = await groupCollection.add({
-    //   "groupName": groupName,
-    //   "groupIcon": "",
-    //   "admin": "${id}_$userName",
-    //   "members": [],
-    //   "groupId": "",
-    //   "recentMessage": "",
-    //   "recentMessageSender": "",
-    // });
-    // update the members
-    // await groupDocumentReference.update({
-    //   "members": FieldValue.arrayUnion(["${uid}_$userName"]),
-    //   "groupId": groupDocumentReference.id,
-    // });
+
 
     DocumentReference userDocumentReference = userCollection.doc(uid);
     await userDocumentReference.collection("groups").doc(groupName).set({
@@ -302,6 +299,70 @@ userCollection.doc(uid).collection("groups").doc(groupName).delete()..then((valu
       });
     }
   }
+
+Stream<QuerySnapshot<Object?>> getData(String groupName){
+
+    Stream<QuerySnapshot> snapshot= userCollection.doc('2sCfGjM6WnNonRH5OK1hqUmZUuo1').
+    collection('groups').where("groupName", isEqualTo: groupName).snapshots();
+  return snapshot;
+}
+  // Stream<QuerySnapshot<Object?>> searchLatestGroupChats(String searchField) {
+  //   Stream<QuerySnapshot> snapshot = latestGroupChatCollection
+  //       .where("groupName", isEqualTo: searchField)
+  //       .snapshots();
+  //   return snapshot;
+  // }
+
+//  Future<bool> getData(List groupName) async {
+//
+//     Color b=Colors.black;
+//     for(int i=0;i<groupName.length;i++) {
+//     final snapshot= await
+//     userCollection.doc('2sCfGjM6WnNonRH5OK1hqUmZUuo1').
+//     collection('groups').where("groupName", isEqualTo: groupName[i]).get().then((value) {
+//       if(value.docs.length==0){
+//         x=false;
+//       }
+//       else{
+//         x=true;
+//         print(value.docs.length);
+//         print(groupName[i]);
+//       }
+//     });
+//
+// return x ;
+//     //     .
+//     // then((value) {
+//     //   if(value==null){
+//     //     print('it does not exist');
+//     //
+//     //   }
+//     //   else{
+//     //
+//     //     print(value.docs.length);
+//     //     print('it exist');
+//     //   }
+//     // });
+//     //  CollectionReference userDocumentReference = userCollection.doc(uid).collection('groups');
+//     //  QuerySnapshot<Object?> documentSnapshot = await userDocumentReference.get();
+//     //
+//     //
+//     //   if (documentSnapshot.contains(groupName[i])) {
+//     //     return true;
+//     //   } else {
+//     //     return false;
+//     //   }
+// //     if(snapshot==null){
+// //       print('false');
+// //
+// //
+// //     }
+// //     else{
+// // print('it is true');
+// //     }
+//     }
+//
+//   }
 
   // send message
   sendMessage(String groupId, Map<String, dynamic> chatMessageData) async {

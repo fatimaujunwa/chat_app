@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ichat/group_chat.dart';
 import 'package:ichat/text_dimensions.dart';
+import 'package:intl/intl.dart';
 
 import 'app_colors.dart';
 import 'chat_screen.dart';
@@ -21,19 +22,44 @@ class _MyGroupsState extends State<MyGroups> {
   bool haveUserSearched=false;
   bool tapped=false;
   bool joined=false;
+  bool error=false;
   QuerySnapshot? searchResultSnapshot;
   QuerySnapshot? searchLatestSnapshot;
   initiateSearch(TextEditingController searchEditingController) async {
     if(searchEditingController.text.isNotEmpty){
-      await DatabaseServices(uid: widget.uid).searchGroup(searchEditingController.text).then((value) {
+      await DatabaseServices(uid: widget.uid).searchMyGroup(searchEditingController.text.toUpperCase()).then((value) {
         searchResultSnapshot = value;
-        print("$searchResultSnapshot");
-        setState(() {
-          haveUserSearched=true;
-        });
+        if(value.docs.isEmpty){
+          print('group does not exist');
+          setState(() {
+            error=true;
+          });
+          setState(() {
+            haveUserSearched=true;
+          });
+        }
+        else{
+          setState(() {
+            haveUserSearched=true;
+          });
+          setState(() {
+            error=false;
+          });
+        }
       });
 
     }
+  }
+  Widget dateTimeConversion(DateTime time){
+    final DateTime now = time;
+    // DateTime parseDate = DateFormat("yyyy-MM-dd HH:mm:ss")
+    //     .parse(now);
+    // var inputData = DateTime.parse(parseDate.toString());
+    final DateFormat formatter =  DateFormat.yMd('en_US');
+    final String formatted = formatter.format(now);
+    print(formatted);
+    return  Text(formatted,style: TextDimensions.style12RajdhaniW600White,);
+
   }
   Widget LatestChats(){
     return  StreamBuilder(
@@ -57,7 +83,7 @@ class _MyGroupsState extends State<MyGroups> {
                     },
                     child: Container(
                       padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-                      height: 80.h ,
+                      height: 70.h ,
                       width: 350.w,
 
                       child: Row(
@@ -65,12 +91,12 @@ class _MyGroupsState extends State<MyGroups> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
 
-                          CircleAvatar(radius: 50.r,
+                          CircleAvatar(radius: 30.r,
                             backgroundColor: AppColors.middleShadeNavyBlue,
                             child: Text(snapshot.data!.docs[index]["groupIcon"],style: TextDimensions.style17RajdhaniW600White,),
                             // backgroundImage: AssetImage('images/${images[index]}'),
                           ),
-                          SizedBox(width: 30.w,),
+                          SizedBox(width: 20.w,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -81,7 +107,9 @@ class _MyGroupsState extends State<MyGroups> {
                           Expanded(child: Container()),
                           Column(
                             children: [
-                              Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
+                              dateTimeConversion(
+                                  (snapshot.data!.docs[index]['time'] as Timestamp).toDate()
+                              ),
                               SizedBox(height: 10.h,),
 
                               BlueContainer(
@@ -138,13 +166,13 @@ DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            Container(
-                margin: EdgeInsets.only(top: 50.h,left: 20.w,),
 
-                child: Text('My Groups',style: TextDimensions.style36RajdhaniW700White,)),
             Container(
               margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
-              child: Column(children: [
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text('My Groups',style: TextDimensions.style36RajdhaniW700White,),
               SizedBox(height: 20.h,),
               CustomTextField(
                 validator: (value ) {  },
@@ -155,7 +183,7 @@ DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]
                       });
                       initiateSearch(search);
                     },
-                    child: Icon(Icons.search)),
+                    child: Icon(Icons.search,color: Colors.white,)),
                 hintText: 'Search...',
                 prefixIcon: true,
                 obsText: false,
@@ -165,8 +193,27 @@ DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]
                 color: AppColors.middleShadeNavyBlue,
                 controller:  search,
               ),
-              haveUserSearched?userList():
-              LatestChats()
+                haveUserSearched&& error? Text(''):
+                haveUserSearched==true && error==false?
+
+                GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        haveUserSearched=true;
+                        error=true;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Icon(Icons.cancel,color: Colors.white,),
+                    )): Text('')
+
+                ,
+
+
+
+                haveUserSearched&& error? LatestChats():
+                haveUserSearched==true && error==false? userList():LatestChats()
             ],),)
 
           ],),
@@ -186,6 +233,7 @@ DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]
             userTile(
               searchResultSnapshot!.docs[index]["groupName"],
               searchResultSnapshot!.docs[index]["sendBy"],
+              searchResultSnapshot!.docs[index]["groupIcon"],
             );
         }) :  Container(
       height: 100,
@@ -194,7 +242,7 @@ DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]
 
     );
   }
-  Widget userTile(String groupName,String admin)     {
+  Widget userTile(String groupName,String admin, String groupIcon)     {
     return
       GestureDetector(
         onTap: (){
@@ -214,10 +262,11 @@ DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
 
-              CircleAvatar(radius: 50.r,
-                backgroundColor: AppColors.middleShadeNavyBlue,
-                // backgroundImage: AssetImage('images/${images[index]}'),
-              ),
+            CircleAvatar(radius: 30.r,
+            backgroundColor: AppColors.middleShadeNavyBlue,
+            child: Text(groupIcon,style: TextDimensions.style17RajdhaniW600White,),
+            // backgroundImage: AssetImage('images/${images[index]}'),
+          ),
               // SizedBox(width: 5.w,),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +278,7 @@ DatabaseServices(uid: widget.uid).toggle(snapshot.data!.docs[index]["groupName"]
               SizedBox(width: 10.w,),
               Column(
                 children: [
-                  Text(''),
+
                   BlueContainer(onPressed: (){
 
                     setState(() {

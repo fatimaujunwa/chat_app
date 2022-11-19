@@ -36,7 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
   QuerySnapshot? searchLatestSnapshot;
   initiateSearch(TextEditingController searchEditingController) async {
     if(searchEditingController.text.isNotEmpty){
-      await DatabaseServices(uid: widget.uid).searchUser(searchEditingController.text).then((value) {
+      await DatabaseServices(uid: widget.uid).searchUser(searchEditingController.text.toUpperCase()).then((value) {
         if(value.docs.isEmpty){
           print('user does not exist');
           setState(() {
@@ -55,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
           });
         }
         searchResultSnapshot = value;
-;
+
 
       });
 
@@ -107,68 +107,14 @@ Widget dateTimeConversion(DateTime time){
   // DateTime parseDate = DateFormat("yyyy-MM-dd HH:mm:ss")
   //     .parse(now);
   // var inputData = DateTime.parse(parseDate.toString());
-  final DateFormat formatter =  DateFormat.yMMMMd('en_US');
+  final DateFormat formatter =  DateFormat.yMd('en_US');
   final String formatted = formatter.format(now);
   print(formatted);
 return  Text(formatted,style: TextDimensions.style12RajdhaniW600White,);
 
 }
 
-  chatMessages()  {
-    return StreamBuilder(
-      stream:   DatabaseServices(uid: widget.uid).getLatestChats(),
-      builder: (context, AsyncSnapshot snapshot){
-        return snapshot.hasData ?
-        ListView.builder(
-          shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index){
-              return
-                Column(
 
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-                      height: 80.h ,
-                      width: 350.w,
-
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-
-                          CircleAvatar(radius: 50.r,
-                            backgroundColor: AppColors.darkNavyBlue,
-                            backgroundImage: AssetImage('images/image1.jpg'),
-                          ),
-                          // SizedBox(width: 5.w,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text( '',style: TextDimensions.style17RajdhaniW600White,),
-                              SizedBox(height: 10.h,),
-                              Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
-                            ],),
-                          SizedBox(width: 10.w,),
-                          Column(
-                            children: [
-                              Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
-                              SizedBox(height: 10.h,),
-                              CircleAvatar(radius: 10,backgroundColor: AppColors.darkBlue,child: Text('5'),),
-                            ],
-                          ),
-                          // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
-
-
-                        ],),
-                    ),
-                    Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
-                  ],
-                );
-            }) : Container(height: 10,width: 10,color: Colors.red,);
-      },
-    );
-  }
   Widget LatestChats(){
     return  StreamBuilder(
       stream: DatabaseServices(uid: widget.uid).searchLatestChats(widget.username
@@ -320,16 +266,21 @@ dateTimeConversion(
               controller:  search,
             ),
             // SizedBox(height: 8.h,),
+            haveUserSearched&& error? Text(''):
+            haveUserSearched==true && error==false?
+            GestureDetector(
+                onTap: (){
+                  setState(() {
+                    haveUserSearched=true;
+                    error=true;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: Icon(Icons.cancel,color: Colors.white,),
+                )): Text(''),
 test()
-            // haveUserSearched ==true && error==false?
-            // Container(height: 100,width: 100,color: Colors.red,)
-            //     :
-            //
-            // Container(height: 100,width: 100,color: Colors.blue,)
-//             userList():
-// // chatMessages()
-//
-//             LatestChats(),
+
 
           ],
         ),
@@ -465,7 +416,7 @@ class _WhiteContainerState extends State<WhiteContainer> {
             borderRadius: BorderRadius.circular(6.r)
         ),
         alignment: Alignment.center,
-        child: Text(widget.text,style: TextDimensions.style15RajdhaniW400White,),
+        child: Text(widget.text,style: TextDimensions.style15RajdhaniW400DarkBlue,),
       ),
     );
   }

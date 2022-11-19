@@ -5,6 +5,7 @@ import 'package:ichat/chat_screen.dart';
 import 'package:ichat/chatroom.dart';
 import 'package:ichat/groups.dart';
 import 'package:ichat/members.dart';
+import 'package:ichat/my_groups.dart';
 import 'package:ichat/search_screen.dart';
 import 'package:ichat/sign_in_screen.dart';
 import 'package:ichat/sign_up_screen.dart';
@@ -33,7 +34,9 @@ class MyApp extends StatelessWidget {
 
 
           ),
-          home: GroupListPage(uid: null, username: '',)
+          home:SignInScreen()
+
+          // MyGroups(uid: '2sCfGjM6WnNonRH5OK1hqUmZUuo1', username: 'mazel')
       );
 
     },

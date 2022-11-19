@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ichat/group_chat.dart';
 import 'package:ichat/text_dimensions.dart';
+import 'package:intl/intl.dart';
 
 import 'app_colors.dart';
 import 'chat_screen.dart';
@@ -24,6 +25,7 @@ class _GroupListPageState extends State<GroupListPage> {
   bool haveUserSearched=false;
   bool tapped=false;
   bool joined=false;
+  bool error=false;
   QuerySnapshot? searchResultSnapshot;
   QuerySnapshot? searchLatestSnapshot;
 
@@ -33,16 +35,33 @@ class _GroupListPageState extends State<GroupListPage> {
 
   initiateSearch(TextEditingController searchEditingController) async {
     if(searchEditingController.text.isNotEmpty){
-      await DatabaseServices(uid: widget.uid).searchGroup(searchEditingController.text).then((value) {
+      await DatabaseServices(uid: widget.uid).searchGroup(searchEditingController.text.toUpperCase()).then((value) {
         searchResultSnapshot = value;
-        print("$searchResultSnapshot");
-        setState(() {
-          haveUserSearched=true;
-        });
+        if(value.docs.isEmpty){
+          print('group does not exist');
+          setState(() {
+            error=true;
+          });
+          setState(() {
+            haveUserSearched=true;
+          });
+        }
+        else{
+          setState(() {
+            haveUserSearched=true;
+          });
+          setState(() {
+            error=false;
+          });
+        }
       });
 
     }
   }
+addToList(String groupName ) async {
+
+}
+
   Widget UserChats(){
     return  StreamBuilder(
       stream: DatabaseServices(uid: widget.uid).getUserGroups(),
@@ -76,111 +95,64 @@ class _GroupListPageState extends State<GroupListPage> {
 
     );
   }
-  Widget LatestChats(){
-    return  StreamBuilder(
-      stream: DatabaseServices(uid: widget.uid).getGroups(),
-      builder: (context,AsyncSnapshot snapshot ){
+  Widget dateTimeConversion(DateTime time){
+    final DateTime now = time;
+    // DateTime parseDate = DateFormat("yyyy-MM-dd HH:mm:ss")
+    //     .parse(now);
+    // var inputData = DateTime.parse(parseDate.toString());
+    final DateFormat formatter =  DateFormat.yMd('en_US');
+    final String formatted = formatter.format(now);
+    print(formatted);
+    return  Text(formatted,style: TextDimensions.style12RajdhaniW600White,);
 
-        return snapshot.hasData ?
-        ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (_,index){
-                  (){}();
-              return  Column(
-
-                children: [
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context){
-                        return GroupChatRoom(admin: snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
-                      }));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-                      height: 80.h ,
-                      width: 350.w,
-
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-
-                          CircleAvatar(radius: 50.r,
-                            backgroundColor: AppColors.middleShadeNavyBlue,
-                            child: Text(snapshot.data!.docs[index]["groupIcon"],style: TextDimensions.style17RajdhaniW600White,),
-                            // backgroundImage: AssetImage('images/${images[index]}'),
-                          ),
-                          // SizedBox(width: 5.w,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(snapshot.data!.docs[index]["groupName"],style: TextDimensions.style17RajdhaniW600White,),
-                              SizedBox(height: 10.0.h,),
-                              Text(snapshot.data!.docs[index]["message"],style: TextDimensions.style12RajdhaniW600White,)
-                            ],),
-                          SizedBox(width: 10.0.w,),
-                          Column(
-                            children: [
-                              Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
-                              SizedBox(height: 10.h,),
-
-
-
-                              BlueContainer(
-                                text: 'Message',
-                                onPressed: ()async{
-
-
-                                  // await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
-                                setState(() {
-                                  // joined=true;
-                                  haveUserSearched=false;
-                                }
-
-                                );
-
-                                // Navigator.push(context, MaterialPageRoute(builder: (context){
-                                //   return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
-                                // }));
-
-
-                              },),
-                            ],
-                          ),
-                          // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
-
-
-                        ],),
-                    ),
-                  ),
-                  Divider(height: 10,color: AppColors.lightNavyBlue,thickness: 1,)
-                ],
-              );
-
-
-
-            }):
-        Center(
-          child:
-          CircularProgressIndicator(color: AppColors.darkBlue,),
-        );
-      },
-
-
-    );
   }
+List group=["ALCOHOL", 'CANCER', 'DRUGS', 'PTSD'];
 
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-  }
+    }
+   bool x=false;
 
+
+  
 
   @override
   Widget build(BuildContext context) {
+    Widget AddToList(String groupName,String group){
+      return StreamBuilder(
+          stream:DatabaseServices(uid: widget.uid).getData(groupName),
+          builder: (context,AsyncSnapshot snapshot){
+        return snapshot.hasData && snapshot.data!.docs.length>0 ?
+            WhiteContainer(
+                text: 'Joined',
+                onPressed: (){
+              
+            }):BlueContainer(
+            text: 'Join',
+            onPressed: ()async{
+              await DatabaseServices(uid: widget.uid).searchGroup(groupName).then((value){
+                print(value.docs.length);
+                DatabaseServices(uid: widget.uid).updateUserGroupMessages(groupName,
+
+                    {
+                      "sendBy":value.docs[0]['sendBy'],
+                      "message":value.docs[0]['message'],
+                      'time': value.docs[0]['time'],
+                      "groupName":value.docs[0]['groupName'],
+                      "groupIcon":value.docs[0]['groupIcon']
+                    });
+
+              });
+        setState(() {
+          haveUserSearched=false;
+        });
+              
+        });
+      });
+    }
     Widget LatestChats(){
       return  StreamBuilder(
         stream: DatabaseServices(uid: widget.uid).getGroups(),
@@ -192,19 +164,26 @@ class _GroupListPageState extends State<GroupListPage> {
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (_,index){
-                    (){}();
+                    (){
+                      List groupList=[];
+groupList.add( snapshot.data!.docs[index]["groupName"]);
+print('groupList: $groupList');
+
+
+                    }();
                 return  Column(
 
                   children: [
                     GestureDetector(
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context){
-                          return GroupChatRoom(admin: snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
+                          return GroupChatRoom(admin: snapshot.data!.docs[index]["sendBy"], groupName:
+                          snapshot.data!.docs[index]["groupName"], uid: widget.uid);
                         }));
                       },
                       child: Container(
-                        padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-                        height: 76.h ,
+                        padding: EdgeInsets.only(bottom: 5.h),
+                        height: 70.h ,
                         width: 350.w,
 
                         child: Row(
@@ -233,44 +212,36 @@ class _GroupListPageState extends State<GroupListPage> {
                             Expanded(child: Container()),
                             Column(
                               children: [
-                                Text('TUES 8:34',style: TextDimensions.style12RajdhaniW600White,),
+                                dateTimeConversion(
+                                    (snapshot.data!.docs[index]['time'] as Timestamp).toDate()
+                                ),
                                 SizedBox(height: 10.h,),
+AddToList(snapshot.data!.docs[index]["groupName"],snapshot.data!.docs[index]['groupName'])
 
 
 
-                                BlueContainer(
-                                  text: 'Add To List',
-                                  onPressed: ()async{
-                                    await DatabaseServices(uid: widget.uid).searchGroup(snapshot.data!.docs[index]["groupName"]).then((value){
-                                      Map<String,dynamic>userGroupChat=      {
-                                        "sendBy":value.docs[0]['sendBy'],
-                                        "message":value.docs[0]['message'],
-                                        'time': value.docs[0]['time'],
-                                        "groupName":value.docs[0]['groupName'],
-                                        "groupIcon":value.docs[0]['groupIcon']
-                                      };
-                                      DatabaseServices(uid: widget.uid).updateUserGroupMessages(snapshot.data!.docs[index]["groupName"],userGroupChat);
-
-                                    });
+// Text(test(groupList[index]).toString())
 
 
-
-
-
-                                    // await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
-                                    setState(() {
-                                      // joined=true;
-                                      haveUserSearched=false;
-                                    }
-
-                                    );
-
-                                    // Navigator.push(context, MaterialPageRoute(builder: (context){
-                                    //   return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
-                                    // }));
-
-
-                                  },),
+                      // BlueContainer(
+                      //             text: 'Add To List',
+                      //             onPressed: ()async{
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //
+                      //               // await DatabaseServices(uid: widget.uid).joinGroup(snapshot.data!.docs[index]["groupName"], snapshot.data!.docs[index]["message"],  snapshot.data!.docs[index]["sendBy"]);
+                      //
+                      //               );
+                      //
+                      //               // Navigator.push(context, MaterialPageRoute(builder: (context){
+                      //               //   return GroupChatRoom(admin:snapshot.data!.docs[index]["sendBy"], groupName: snapshot.data!.docs[index]["groupName"], uid: widget.uid);
+                      //               // }));
+                      //
+                      //
+                      //             },),
                               ],
                             ),
                             // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
@@ -306,15 +277,13 @@ class _GroupListPageState extends State<GroupListPage> {
 
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            Container(
 
-                margin: EdgeInsets.only(top: 50.h,left: 20.w,),
-                child: Text('Support Groups',style: TextDimensions.style36RajdhaniW700White,)),
             Container(
               margin: EdgeInsets.only(top: 50.h,left: 20.w,right: 20.w),
               child: Column(
-
+crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text('Support Groups',style: TextDimensions.style36RajdhaniW700White,),
                 SizedBox(height: 20.h,),
                 CustomTextField(
                   validator: (value ) {  },
@@ -335,8 +304,32 @@ class _GroupListPageState extends State<GroupListPage> {
                   color: AppColors.middleShadeNavyBlue,
                   controller:  search,
                 ),
-                haveUserSearched?userList():
-                LatestChats()
+// SizedBox(height: 15.h,),
+                haveUserSearched&& error? Text(''): 
+                haveUserSearched==true && error==false?
+
+                GestureDetector(
+                  onTap: (){
+                    setState(() {
+                      haveUserSearched=true;
+                      error=true;
+                    });
+                  },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Container(
+                          alignment: Alignment.centerRight,
+                          child: Icon(Icons.cancel,color: Colors.white,)),
+                    )): Text('')
+                
+                ,
+            
+                
+                
+                haveUserSearched&& error? LatestChats():
+                haveUserSearched==true && error==false? userList():LatestChats()
+                // haveUserSearched?userList():
+                // LatestChats()
 
               ],
             ),)
@@ -359,6 +352,7 @@ class _GroupListPageState extends State<GroupListPage> {
             userTile(
               searchResultSnapshot!.docs[index]["groupName"],
               searchResultSnapshot!.docs[index]["sendBy"],
+              searchResultSnapshot!.docs[index]["groupIcon"],
             );
         }) :  Container(
       height: 100,
@@ -367,7 +361,7 @@ class _GroupListPageState extends State<GroupListPage> {
 
     );
   }
-  Widget userTile(String groupName,String admin)     {
+  Widget userTile(String groupName,String admin,String groupIcon)     {
     return
       GestureDetector(
         onTap: (){
@@ -378,7 +372,8 @@ class _GroupListPageState extends State<GroupListPage> {
             haveUserSearched=false;
           });
         },
-        child: Container(
+        child:
+        Container(
           padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
           height: 80.h ,
           width: 350.w,
@@ -387,8 +382,9 @@ class _GroupListPageState extends State<GroupListPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
 
-              CircleAvatar(radius: 50.r,
+              CircleAvatar(radius: 30.r,
                 backgroundColor: AppColors.middleShadeNavyBlue,
+                child: Text(groupIcon,style: TextDimensions.style17RajdhaniW600White,),
                 // backgroundImage: AssetImage('images/${images[index]}'),
               ),
               // SizedBox(width: 5.w,),
