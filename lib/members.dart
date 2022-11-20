@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ichat/chat_screen.dart';
 import 'package:ichat/text_dimensions.dart';
 
 import 'app_colors.dart';
@@ -38,40 +39,27 @@ class _MembersListState extends State<MembersList> {
 
                   children: [
                     Container(
-                      padding: EdgeInsets.only(top: 5.h,bottom: 5.h),
-                      height: 80.h ,
+                      padding: EdgeInsets.only(bottom: 5.h),
+                      height: 60.h ,
                       width: 350.w,
 
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
 
-                          CircleAvatar(radius: 50.r,
-                            backgroundColor: AppColors.darkNavyBlue,
+                          CircleAvatar(radius: 30.r,
+                            backgroundColor: AppColors.middleShadeNavyBlue,
                             // backgroundImage: AssetImage('images/${images[index]}'),
                           ),
                           // SizedBox(width: 5.w,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(snapshot.data!.docs[index]["members"],style: TextDimensions.style17RajdhaniW600White,),
-
-                            ],),
+                          Text(snapshot.data!.docs[index]["members"],style: TextDimensions.style17RajdhaniW600White,),
                           SizedBox(width: 10.w,),
-                          Column(
-                            children: [
-                              Text(''),
-                              Container(height: 35.h,width: 80.w,
-                                decoration: BoxDecoration(
-                                    color: AppColors.darkBlue,
-                                    borderRadius: BorderRadius.circular(6.r)
-                                ),
-                                alignment: Alignment.center,
-                                child: Text('Message',style: TextDimensions.style15RajdhaniW400White,),
-                              ),
+                          BlueContainer(
 
+                              onPressed: (){
 
-                            ],
+                          },
+                          text: 'Message',
                           ),
                           // Divider(height: 10,color: AppColors.whiteColor,thickness: 2,)
 
@@ -107,7 +95,7 @@ class _MembersListState extends State<MembersList> {
             SizedBox(height: 20.h,),
             CustomTextField(
               validator: (value ) {  },
-              icon: Icon(Icons.search),
+              icon: Icon(Icons.search,color: Colors.white,),
               hintText: 'Search...',
               prefixIcon: true,
               obsText: false,

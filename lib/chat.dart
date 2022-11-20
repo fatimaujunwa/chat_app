@@ -33,7 +33,7 @@ class _ChatState extends State<Chat> {
             itemBuilder: (context, index){
               return MessageTile(
                message: snapshot.data!.docs[index]["message"],
-                sendByMe: sender== snapshot.data!.docs[index]["sendBy"],
+                sendByMe: sender== snapshot.data!.docs[index]["sendBy"], sentFrom: '', sentTo: '',
               );
             }) : Container();
       },
@@ -72,6 +72,8 @@ DatabaseServices(uid:widget.uid).addMessage(widget.chatRoomId, chatMessageMap);
 
        messageEditingController.clear();
       }
+
+
     }
 
     return Scaffold(
@@ -123,33 +125,59 @@ backgroundColor: AppColors.darkNavyBlue,
 
 
 }
-class MessageTile extends StatelessWidget {
+int counter=0;
+class MessageTile extends StatefulWidget {
   final String message;
   final bool sendByMe;
+  final String sentFrom;
+  final String sentTo;
 
-  MessageTile({required this.message, required this.sendByMe});
+  MessageTile({required this.message, required this.sendByMe,required this.sentFrom,required this.sentTo});
+
+  @override
+  State<MessageTile> createState() => _MessageTileState();
+}
+
+class _MessageTileState extends State<MessageTile> {
 
 
   @override
   Widget build(BuildContext context) {
+        (){
+
+          if(widget.sendByMe==true){
+          print('sent by me');
+          }
+          else
+            {
+              setState(() {
+                counter++;
+              });
+              print('counter: $counter');
+            }
+
+        }();
+
     return Column(
+
+
       children: [
         Container(
           padding: EdgeInsets.only(
               top: 8,
               bottom: 8,
-              left: sendByMe ? 0 : 20,
-              right: sendByMe ? 20 : 0),
-          alignment: sendByMe ? Alignment.centerRight : Alignment.centerLeft,
-          child: 
+              left: widget.sendByMe ? 0 : 20,
+              right: widget.sendByMe ? 20 : 0),
+          alignment: widget.sendByMe ? Alignment.centerRight : Alignment.centerLeft,
+          child:
           Container(
-            margin: sendByMe
+            margin: widget.sendByMe
                 ? EdgeInsets.only(left: 30)
                 : EdgeInsets.only(right: 30),
             padding: EdgeInsets.only(
                 top: 17, bottom: 17, left: 20, right: 20),
             decoration: BoxDecoration(
-                borderRadius: sendByMe ? BorderRadius.only(
+                borderRadius: widget.sendByMe ? BorderRadius.only(
                     // topLeft: Radius.circular(23),
                     topRight: Radius.circular(23),
                     bottomLeft: Radius.circular(23)
@@ -159,7 +187,7 @@ class MessageTile extends StatelessWidget {
                     // topRight: Radius.circular(23),
                     bottomRight: Radius.circular(23)),
                 gradient: LinearGradient(
-                  colors: sendByMe ? [
+                  colors: widget.sendByMe ? [
                     AppColors.lightNavyBlue,
                     AppColors.lightNavyBlue,
                   ]
@@ -169,21 +197,24 @@ class MessageTile extends StatelessWidget {
                   ],
                 )
             ),
-            child: Text(message,
+            child: Text(widget.message,
                 textAlign: TextAlign.start,
                 style:TextDimensions.style17RajdhaniW400White),
           ),
         ),
     Container(
       // color: Colors.red,
-      margin: sendByMe
+      margin: widget.sendByMe
           ? EdgeInsets.only(left: 220)
           : EdgeInsets.only(right:220),
       padding: EdgeInsets.only(
           top: 17, bottom: 17, left: 20, right: 20),
-      child: Text('1 FEB 12:00 2022',style: TextDimensions.style12RajdhaniW600White,),
-    
-    )
+      child:widget.sendByMe? Text(widget.sentFrom,style: TextDimensions.style12RajdhaniW600White,):
+      Text(widget.sentTo,style: TextDimensions.style12RajdhaniW600White,),
+
+    ),
+
+
       ],
     );
   }

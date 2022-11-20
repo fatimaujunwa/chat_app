@@ -49,7 +49,7 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
                 itemBuilder: (context, index){
                   return MessageTile(
                     message: snapshot.data!.docs[index]["message"],
-                    sendByMe: sender== snapshot.data!.docs[index]["sendBy"],
+                    sendByMe: sender== snapshot.data!.docs[index]["sendBy"], sentFrom: '', sentTo: '',
                   );
                 }),
           ) : Container();

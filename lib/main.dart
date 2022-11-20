@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
 
 
           ),
-          home:SignInScreen()
+          home:SignUpScreen()
 
           // MyGroups(uid: '2sCfGjM6WnNonRH5OK1hqUmZUuo1', username: 'mazel')
       );

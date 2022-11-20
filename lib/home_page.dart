@@ -133,11 +133,8 @@ class _HomePageState extends State<HomePage> {
               selectedColor: Color(0xff73544C),
             ),
 
-            /// Profile
-            DotNavigationBarItem(
-              icon: Icon(Icons.person),
-              selectedColor: Color(0xff73544C),
-            ),
+      
+
           ],
         ),
         // FloatingNavbar(
