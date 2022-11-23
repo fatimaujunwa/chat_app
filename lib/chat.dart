@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ichat/app_colors.dart';
 import 'package:ichat/database_services.dart';
 import 'package:ichat/helper_functions.dart';
@@ -172,10 +173,10 @@ class _MessageTileState extends State<MessageTile> {
           child:
           Container(
             margin: widget.sendByMe
-                ? EdgeInsets.only(left: 30)
-                : EdgeInsets.only(right: 30),
+                ? EdgeInsets.only(left: 30.w)
+                : EdgeInsets.only(right: 30.w),
             padding: EdgeInsets.only(
-                top: 17, bottom: 17, left: 20, right: 20),
+                top: 17, bottom: 17, left: 20.0, right: 20),
             decoration: BoxDecoration(
                 borderRadius: widget.sendByMe ? BorderRadius.only(
                     // topLeft: Radius.circular(23),
